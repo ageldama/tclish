@@ -17,6 +17,13 @@
                 (
                  (:file "tclish-cffi")
                  (:file "tclish")
+                 (:file "value-juggling")
+                 (:file "apply-lambda")
+                 (:file "do+chk")
+                 (:file "zipfs")
+                 (:file "create-cmd")
+                 (:file "evtq")
+                 (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
                  ))
                )
