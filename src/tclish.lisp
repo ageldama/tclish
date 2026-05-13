@@ -15,7 +15,7 @@
 
    #:queue-evt-func
 
-   #:create-command
+   #:def-cmd
    #:interp
    #:args
 

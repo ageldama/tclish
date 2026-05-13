@@ -10,6 +10,7 @@
                :iterate
                :str
                :raw-cffi-tcl9
+               :bordeaux-threads
                )
   :components ((:module "src"
                 :serial t

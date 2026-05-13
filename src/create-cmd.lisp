@@ -1,9 +1,6 @@
 (in-package :tclish)
 
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require :sb-concurrency))
-
 
 (cffi:defctype cmd-cb-counter-t :uint64)
 
@@ -13,7 +10,7 @@
 
 (defvar *tcl-cmd-obj-cb-ht* (make-hash-table))
 
-(defvar *tcl-cmd-lock* (sb-concurrency:make-frlock))
+(defvar *tcl-cmd-lock* (bt2:make-lock :name "*tcl-cmd-lock*"))
 
 (declaim (inline %cmd-cb-counter-value-from-c)
          (optimize (speed 1) (safety 3)))
@@ -39,7 +36,7 @@
        )
   (let ((%cb-nr  (gensym))
         (%cb     (gensym)))
-    `(sb-concurrency:frlock-read (,frlock)
+    `(bt2:with-lock-held (,frlock)
        (let* ((,%cb-nr      (%cmd-cb-counter-value-from-c client-data))
               (,%cb         (gethash ,%cb-nr ,cb-ht nil))) ;; mutex
          (assert (not (null ,%cb)))
@@ -106,7 +103,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
         (%c-cb-nr   (gensym))
         (%new-cmd   (gensym)))
     `(defun ,defun-name (interp cmd-name func)
-       (sb-concurrency:frlock-write (,frlock)
+       (bt2:with-lock-held (,frlock)
          (let* ((,%new-cb-nr   (incf ,counter))  ;; mutex(W)
                 (,%c-cb-nr     (cffi:foreign-alloc 'cmd-cb-counter-t))
                 (*tcl-interp*  interp)
@@ -181,7 +178,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
   +tcl-error+)
 
 
-(defmacro create-command
+(defmacro def-cmd
     ((name
       &key
         (interp     '*tcl-interp*)
