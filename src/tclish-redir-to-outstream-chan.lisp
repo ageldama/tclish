@@ -2,6 +2,7 @@
   (:use #:cl
         #:raw-cffi-tcl9
         #:tclish
+        #:tclish/cffi
         )
 
   (:export

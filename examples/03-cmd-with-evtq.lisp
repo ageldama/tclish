@@ -1,9 +1,9 @@
 
-(defpackage #:tclish/example/03-cmd-with-evtq
+(defpackage #:tclish/examples/03-cmd-with-evtq
   (:use #:cl #:raw-cffi-tcl9 #:tclish)
   (:export #:main-cmd-with-evtq))
 
-(in-package :tclish/example/03-cmd-with-evtq)
+(in-package :tclish/examples/03-cmd-with-evtq)
 
 
 (defun main-cmd-with-evtq ()

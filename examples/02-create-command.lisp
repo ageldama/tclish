@@ -1,9 +1,9 @@
 
-(defpackage #:tclish/example/02-create-command
+(defpackage #:tclish/examples/02-create-command
   (:use #:cl #:raw-cffi-tcl9 #:tclish)
   (:export #:main-create-command))
 
-(in-package :tclish/example/02-create-command)
+(in-package :tclish/examples/02-create-command)
 
 
 (defun main-create-command ()

@@ -1,9 +1,9 @@
 
-(defpackage #:tclish/example/01-tk-msgbox
+(defpackage #:tclish/examples/01-tk-msgbox
   (:use #:cl #:raw-cffi-tcl9 #:tclish)
   (:export #:main-tk-msg-box))
 
-(in-package :tclish/example/01-tk-msgbox)
+(in-package :tclish/examples/01-tk-msgbox)
 
 
 (defun main-tk-msg-box ()
