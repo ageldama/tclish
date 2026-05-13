@@ -7,12 +7,11 @@
 
 
 (defun main-tk-msg-box ()
-  (let ((interp (tcl-create-interp)))
-    (unwind-protect
-         (let ((*tcl-interp* interp) (*do+chk/error?* t))
-           (do+chk (tcl-init) interp)
-           (do+chk (tk-init) interp)
-           (do+chk (tcl-eval)
-                   interp "tk_messageBox -message {안녕하슈! Hello!}"))
-      ;; cleanup:
-      (tcl-delete-interp interp))))
+  (app-main (:tk-init? t
+             :tk-main-loop? nil
+             :after-init (format t "here we go~%"))
+            (do+chk (tcl-eval)
+                    *tcl-interp*
+                    "tk_messageBox -message {안녕하슈! Hello!}")))
+
+
