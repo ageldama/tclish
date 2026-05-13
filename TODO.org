@@ -1,0 +1,9 @@
+
+* TODO proper documentation
+
+* TODO docstrings, comments
+
+* TODO short introduction, descriptions
+
+* TODO compare with raw tcl/tk c api, ltk
+
