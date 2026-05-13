@@ -12,6 +12,7 @@
                  (:file "02-create-command")
                  (:file "03-cmd-with-evtq")
                  (:file "04-redir-stdout")
+                 (:file "05-tk-main-loop")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"
