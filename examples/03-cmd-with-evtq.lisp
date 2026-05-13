@@ -15,7 +15,7 @@
             (def-cmd ("do_sth_in_thread")
                      (format t "DO_STH_IN_THREAD: ~a / ~a~%" interp args)
                      (let ((thr (tcl-get-current-thread)))
-                       (sb-thread:make-thread
+                       (bt2:make-thread
                         (lambda ()
                           (queue-evt
                               (:interp interp :thread-id thr)
