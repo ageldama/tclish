@@ -39,6 +39,8 @@
    #:wrap-error*
    #:wrap-error
    #:wrap-result
+
+   #:app-main
    ))
 
 

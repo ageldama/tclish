@@ -23,6 +23,7 @@
                  (:file "zipfs")
                  (:file "create-cmd")
                  (:file "evtq")
+                 (:file "app-main")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
                  ))
