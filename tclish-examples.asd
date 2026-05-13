@@ -7,8 +7,7 @@
   :components ((:module "examples"
                 :serial t
                 :components
-                (
-                 (:file "01-tk-msgbox")
+                ((:file "01-tk-msgbox")
                  (:file "02-def-cmd")
                  (:file "03-cmd-with-evtq")
                  (:file "04-redir-stdout")

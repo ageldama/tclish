@@ -10,8 +10,6 @@
   (app-main (:tk-init? t
              :tk-main-loop? nil
              :after-init (format t "here we go~%"))
-            (do+chk (tcl-eval)
-                    *tcl-interp*
-                    "tk_messageBox -message {안녕하슈! Hello!}")))
+            (eval-str "tk_messageBox -message {안녕하슈! Hello!}")))
 
 

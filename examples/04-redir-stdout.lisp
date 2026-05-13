@@ -7,8 +7,7 @@
 
 
 (defun main-redir-stdout ()
-  (app-main (:stdout-stream *standard-output*)
-            (do+chk (tcl-eval :error? nil)
-                    *tcl-interp*
-                    "puts {안녕하슈! HELLO?!}")))
+  (app-main (:stdout-stream *standard-output*
+             :do+chk/error? nil)
+            (eval-str "puts {안녕하슈! HELLO?!}")))
 

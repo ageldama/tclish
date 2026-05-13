@@ -43,6 +43,8 @@
    #:wrap-error
    #:wrap-result
 
+   #:eval-str
+
    #:app-main
    ))
 

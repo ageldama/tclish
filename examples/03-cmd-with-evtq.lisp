@@ -30,7 +30,7 @@
                      (format t "DO_STH_ANOTHER: ~a ~%" interp))
 
             ;;
-            (do+chk (tcl-eval)
-                    *tcl-interp*
-                    "do_sth_in_thread; vwait forever; do_sth_another")))
+            (eval-str "do_sth_in_thread"
+                      "vwait forever"
+                      "do_sth_another")))
 

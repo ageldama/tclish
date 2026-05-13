@@ -7,7 +7,7 @@
 
 
 (defun main-def-cmd ()
-  (app-main ()
+  (app-main (:do+chk/error? nil)
             ;; body:
             (def-cmd ("cmd_1")
                      (format t "CMD-1: ~a~%" interp)
@@ -22,7 +22,6 @@
                      (format t "~{~A~}~%" (cdr args)))
 
             ;;
-            (do+chk (tcl-eval :error? nil)
-                    *tcl-interp*
-                    "p [cmd_1]; p [cmd_err]")))
+            (eval-str "p [cmd_1]"
+                      "p [cmd_err]")))
 

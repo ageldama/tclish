@@ -8,8 +8,5 @@
 
 (defun main-tk-main-loop ()
   (app-main (:tk-init? t :tk-main-loop? t)
-            (do+chk (tcl-eval)
-                    *tcl-interp*
-                   (concatenate 'string
-                                "button .btn -text {<esc>:q!} -command {destroy .};"
-                                "pack .btn"))))
+            (eval-str "button .btn -text {<esc>:q!} -command {destroy .}"
+                      "pack .btn")))
