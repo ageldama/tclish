@@ -4,7 +4,7 @@
 
 * VERSION: 0.0.1
 
-* Currenctly only supports SBCL and tested under:
+* Currenctly only tested under:
    * SBCL 2.6.4 / Linux x86_64
    * libtcl9.0 (9.0.1+dfsg-2)
    * libtk9.0 (9.0.1-3)
@@ -19,8 +19,7 @@
 
 Write your new Tcl/Tk commands in Lisp:
 ```lisp
-(create-command
-    (:interp *tcl-interp* :name "AWESOME_PROC")
+(def-cmd ("AWESOME_PROC")
     (format t "HI!: ~a ~a~%" interp args)
     :I-AM-A-RESULT-VALUE)
 ```
