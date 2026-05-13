@@ -8,22 +8,21 @@
 
 (defun main-def-cmd ()
   (app-main ()
-
             ;; body:
+            (def-cmd ("cmd_1")
+                     (format t "CMD-1: ~a~%" interp)
+                     :cmd-1-done)
+
+            (def-cmd ("cmd_err")
+                     (format t "CMD-ERR: ~a~%" interp)
+                     (error "err!err!")
+                     :cmd-err-done)
+
             (def-cmd ("p")
                      (format t "~{~A~}~%" (cdr args)))
-
-            (def-cmd ("do_sth_1")
-                     (format t "STH-1: ~a~%" interp)
-                     :sth-1-done)
-
-            (def-cmd ("do_sth_err")
-                     (format t "STH-ERR: ~a~%" interp)
-                     (error "err!err!")
-                     :sth-err-done)
 
             ;;
             (do+chk (tcl-eval :error? nil)
                     *tcl-interp*
-                    "p [do_sth_1]; p [do_sth_err]")))
+                    "p [cmd_1]; p [cmd_err]")))
 

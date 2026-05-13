@@ -16,6 +16,7 @@
    #:queue-evt-func
 
    #:def-cmd
+   #:*def-cmd-ns-prefix*
    #:interp
    #:args
 

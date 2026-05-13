@@ -178,12 +178,16 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
   +tcl-error+)
 
 
+(defvar *def-cmd-ns-prefix* "")
+
+
 (defmacro def-cmd
     ((name
       &key
         (interp     '*tcl-interp*)
         (lambda-list '(interp args))
         (args-type  :strings)  ;; (:strings :objs)
+        (ns-prefix  *def-cmd-ns-prefix*)
         (wrap-p     t))
      &rest body)
   (let* ((create-command-func
@@ -193,6 +197,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
              (t
               (error "Unsupported args-type (should be :strings or :objs)"))))
          (%result (gensym))
+         (fqn-name    (concatenate 'string ns-prefix name))
          (wrapped-body
            (if wrap-p
                `((handler-case
@@ -202,7 +207,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
                body)))
     `(,create-command-func
       ,interp
-      ,name
+      ,fqn-name
       (lambda ,lambda-list
         (declare (ignorable ,@lambda-list))
         ,@wrapped-body))))
