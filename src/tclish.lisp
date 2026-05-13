@@ -81,7 +81,7 @@
 
 
 
-(defun mnt-zipfs (rel-zip-filename
+(defun mnt-zipfs (zip-filename
                   &key
                     (mnt-point "//zipfs:/app")
                     zip-passwd
@@ -90,12 +90,11 @@
   (let ((tcl-library-path% (concatenate 'string mnt-point
                                         tcl-library-path))
         (tk-library-path%  (concatenate 'string mnt-point
-                                        tk-library-path))
-        abs-zip-fn)
-    (unless (uiop:file-exists-p abs-zip-fn)
-      (error "no-zip-file ~a" abs-zip-fn))
+                                        tk-library-path)))
+    (unless (uiop:file-exists-p zip-filename)
+      (error "no-zip-file ~a" zip-filename))
     (do+chk (tcl-zipfs-mount)
-            *tcl-interp* abs-zip-fn mnt-point zip-passwd)
+            *tcl-interp* zip-filename mnt-point zip-passwd)
     (do+chk (tcl-set-var)
             *tcl-interp*
             "tcl-library-path" tcl-library-path%
@@ -297,7 +296,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-error (interp err)
-  (wrap-error interp err)
+  (wrap-error* interp err)
   +tcl-error+)
 
 
