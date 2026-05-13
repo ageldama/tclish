@@ -7,29 +7,26 @@
 
 
 (defun main-create-command ()
-  (let ((*tcl-interp* (tcl-create-interp)))
-    (unwind-protect
-         (progn (do+chk (tcl-init) *tcl-interp*)
+  (app-main ()
 
-                (create-command
-                    (:interp *tcl-interp* :name "p")
-                    (format t "~{~A~}~%" (cdr args)))
+            ;; body:
+            (create-command
+                (:interp *tcl-interp* :name "p")
+                (format t "~{~A~}~%" (cdr args)))
 
-                (create-command
-                    (:interp *tcl-interp* :name "do_sth_1")
-                    (format t "STH-1: ~a~%" interp)
-                    :sth-1-done)
+            (create-command
+                (:interp *tcl-interp* :name "do_sth_1")
+                (format t "STH-1: ~a~%" interp)
+                :sth-1-done)
 
-                (create-command
-                    (:interp *tcl-interp* :name "do_sth_err")
-                    (format t "STH-ERR: ~a~%" interp)
-                    (error "err!err!")
-                    :sth-err-done)
+            (create-command
+                (:interp *tcl-interp* :name "do_sth_err")
+                (format t "STH-ERR: ~a~%" interp)
+                (error "err!err!")
+                :sth-err-done)
 
-                ;;
-                (do+chk (tcl-eval :error? nil)
-                        *tcl-interp*
-                        "p [do_sth_1]; p [do_sth_err]")))
-    ;; cleanup:
-    (tcl-delete-interp *tcl-interp*)))
+            ;;
+            (do+chk (tcl-eval :error? nil)
+                    *tcl-interp*
+                    "p [do_sth_1]; p [do_sth_err]")))
 

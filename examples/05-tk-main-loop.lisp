@@ -7,17 +7,9 @@
 
 
 (defun main-tk-main-loop ()
-  (let ((interp (tcl-create-interp)))
-    (unwind-protect
-         (let ((*tcl-interp* interp) (*do+chk/error?* t))
-           (do+chk (tcl-init) interp)
-           (do+chk (tk-init) interp)
-           (do+chk (tcl-eval)
-                   interp
+  (app-main (:tk-init? t :tk-main-loop? t)
+            (do+chk (tcl-eval)
+                    *tcl-interp*
                    (concatenate 'string
                                 "button .btn -text {<esc>:q!} -command {destroy .};"
-                                "pack .btn"
-                                )))
-      (tk-main-loop)
-      ;; cleanup:
-      (tcl-delete-interp interp))))
+                                "pack .btn"))))
