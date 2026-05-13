@@ -7,12 +7,13 @@
   :components ((:module "examples"
                 :serial t
                 :components
-                (
-                 (:file "01-tk-msgbox")
-                 (:file "02-create-command")
+                ((:file "01-tk-msgbox")
+                 (:file "02-def-cmd")
                  (:file "03-cmd-with-evtq")
                  (:file "04-redir-stdout")
                  (:file "05-tk-main-loop")
+                 (:file "06-def-cmd-in-ns")
+                 (:file "07-ensemble")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"

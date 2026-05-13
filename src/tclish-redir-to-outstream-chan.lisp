@@ -35,20 +35,15 @@
 
 (defvar *registered-chan-ht* (make-hash-table))
 
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require :sb-concurrency))
-
-
-(defvar *lock* (sb-concurrency:make-frlock))
+(defvar *lock* (bt2:make-lock :name "*lock*"))
 
 
 (defun %new-instance-counter ()
-  (sb-concurrency:frlock-write (*lock*)
+  (bt2:with-lock-held (*lock*)
     (incf *chan-instance-counter*)))
 
 (defun %put-instance (chan)
-  (sb-concurrency:frlock-write (*lock*)
+  (bt2:with-lock-held (*lock*)
     (with-slots (client-data) chan
       (setf (gethash (cffi:mem-ref client-data
                                    'chan-instance-counter-t)
@@ -56,7 +51,7 @@
             chan))))
 
 (defun %rem-instance (chan)
-  (sb-concurrency:frlock-write (*lock*)
+  (bt2:with-lock-held (*lock*)
     (with-slots (client-data) chan
       (remhash (cffi:mem-ref client-data
                              'chan-instance-counter-t)

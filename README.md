@@ -4,7 +4,7 @@
 
 * VERSION: 0.0.1
 
-* Currenctly only supports SBCL and tested under:
+* Currenctly only tested under:
    * SBCL 2.6.4 / Linux x86_64
    * libtcl9.0 (9.0.1+dfsg-2)
    * libtk9.0 (9.0.1-3)
@@ -19,18 +19,22 @@
 
 Write your new Tcl/Tk commands in Lisp:
 ```lisp
-(create-command
-    (:interp *tcl-interp* :name "AWESOME_PROC")
+(def-cmd ("AWESOME_PROC")
     (format t "HI!: ~a ~a~%" interp args)
     :I-AM-A-RESULT-VALUE)
+
+(eval-str "AWESOME_PROC"
+          "puts {WAS Awesome}")
 ```
 
 
 1. [`tk_messageBox`](./examples/01-tk-msgbox.lisp)
-1. [Create Tcl command with ease](./examples/02-create-command.lisp)
+1. [Create Tcl command with ease](./examples/02-def-cmd.lisp)
 1. [Threadin in Lisp-side, Tcl Event Queue](./examples/03-cmd-with-evtq.lisp)
 1. *Unstable* [Redirecting Tcl standard channel to Lisp stream](./examples/04-redir-stdout.lisp)
 1. [Tk "main-loop"](./examples/05-tk-main-loop.lisp)
+1. [def-cmd in namespace](./examples/06-def-cmd-in-ns.lisp)
+1. [Tcl Ensembles + def-cmd](./examples/07-ensemble.lisp)
 
 
 ```lisp

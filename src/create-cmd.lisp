@@ -1,9 +1,6 @@
 (in-package :tclish)
 
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require :sb-concurrency))
-
 
 (cffi:defctype cmd-cb-counter-t :uint64)
 
@@ -13,7 +10,7 @@
 
 (defvar *tcl-cmd-obj-cb-ht* (make-hash-table))
 
-(defvar *tcl-cmd-lock* (sb-concurrency:make-frlock))
+(defvar *tcl-cmd-lock* (bt2:make-lock :name "*tcl-cmd-lock*"))
 
 (declaim (inline %cmd-cb-counter-value-from-c)
          (optimize (speed 1) (safety 3)))
@@ -39,7 +36,7 @@
        )
   (let ((%cb-nr  (gensym))
         (%cb     (gensym)))
-    `(sb-concurrency:frlock-read (,frlock)
+    `(bt2:with-lock-held (,frlock)
        (let* ((,%cb-nr      (%cmd-cb-counter-value-from-c client-data))
               (,%cb         (gethash ,%cb-nr ,cb-ht nil))) ;; mutex
          (assert (not (null ,%cb)))
@@ -106,7 +103,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
         (%c-cb-nr   (gensym))
         (%new-cmd   (gensym)))
     `(defun ,defun-name (interp cmd-name func)
-       (sb-concurrency:frlock-write (,frlock)
+       (bt2:with-lock-held (,frlock)
          (let* ((,%new-cb-nr   (incf ,counter))  ;; mutex(W)
                 (,%c-cb-nr     (cffi:foreign-alloc 'cmd-cb-counter-t))
                 (*tcl-interp*  interp)
@@ -181,21 +178,35 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
   +tcl-error+)
 
 
-(defmacro create-command
-    ((&key
-        interp
-        name
+(defvar *def-cmd-ns* "")
+
+(defvar *def-cmd-tracker* nil)
+
+(defun %compose-ns-fqn (ns name)
+  (if (zerop (length ns))
+      name
+      ;; else:
+      (concatenate 'string ns "::" name)))
+
+
+(defmacro def-cmd
+    ((name
+      &key
+        (interp     '*tcl-interp*)
         (lambda-list '(interp args))
         (args-type  :strings)  ;; (:strings :objs)
+        (ns         '*def-cmd-ns*)
         (wrap-p     t))
      &rest body)
+
   (let* ((create-command-func
            (case args-type
              (:strings 'create-string-command)
              (:objs    'create-obj-command)
              (t
               (error "Unsupported args-type (should be :strings or :objs)"))))
-         (%result (gensym))
+         (%result   (gensym))
+         (%fqn-name (gensym))
          (wrapped-body
            (if wrap-p
                `((handler-case
@@ -203,12 +214,17 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
                        (wrap-result ,interp ,%result))
                    (error (c) (wrap-error ,interp c))))
                body)))
-    `(,create-command-func
-      ,interp
-      ,name
-      (lambda ,lambda-list
-        (declare (ignorable ,@lambda-list))
-        ,@wrapped-body))))
+
+    `(let ((,%fqn-name (%compose-ns-fqn ,ns ,name)))
+       (when *def-cmd-tracker*
+         (funcall *def-cmd-tracker* ,%fqn-name :ns ,ns :name ,name))
+       ;;
+       (,create-command-func
+        ,interp
+        ,%fqn-name
+        (lambda ,lambda-list
+          (declare (ignorable ,@lambda-list))
+          ,@wrapped-body)))))
 
 
 

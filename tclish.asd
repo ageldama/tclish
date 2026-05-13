@@ -10,23 +10,25 @@
                :iterate
                :str
                :raw-cffi-tcl9
+               :bordeaux-threads
                )
   :components ((:module "src"
                 :serial t
                 :components
-                (
-                 (:file "tclish-cffi")
+                ((:file "tclish-cffi")
                  (:file "tclish")
                  (:file "value-juggling")
                  (:file "apply-lambda")
                  (:file "do+chk")
+                 (:file "eval")
                  (:file "zipfs")
+                 (:file "ns")
                  (:file "create-cmd")
+                 (:file "ensemble")
                  (:file "evtq")
-                 (:file "app-main")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
-                 ))
-               )
+                 (:file "app-main")
+                 )))
   :description "Much more Lispy(tm) Tcl/Tk 9.0"
   )

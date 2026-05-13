@@ -2,10 +2,6 @@
 
 
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (require :sb-concurrency))
-
-
 (cffi:defctype tcl-ev-queue-cb-counter-t :uint64)
 
 (cffi:defcstruct tcl-ev-queue-cb-evt-s
@@ -21,7 +17,7 @@
 
 (defvar *tcl-ev-queue-cb-ht* (make-hash-table))
 
-(defvar *tcl-ev-queue-lock* (sb-concurrency:make-frlock))
+(defvar *tcl-ev-queue-lock* (bt2:make-lock :name "*tcl-ev-queue-lock*"))
 
 
 (defun %tcl-ev-queue-cb-counter/value-from-c (c-val)
@@ -50,7 +46,7 @@ indicate that the event can be re‐ moved from the queue.
                               ev-ptr (:struct tcl-ev-queue-cb-evt-s))
       ;; (format t "cb:~a / interp:~a / thr:~a~%"
       ;;         cb-counter interp-ptr thread-id)
-      (sb-concurrency:frlock-write (*tcl-ev-queue-lock*)
+      (bt2:with-lock-held (*tcl-ev-queue-lock*)
         (setf cb-fdef (gethash cb-counter *tcl-ev-queue-cb-ht*))
         (assert (not (null cb-fdef)))
         (remhash cb-counter *tcl-ev-queue-cb-ht*))
@@ -67,7 +63,7 @@ indicate that the event can be re‐ moved from the queue.
        ev-queue-cb-fdef
        (queue-position :tcl-queue-tail)
        (thread-alert-p t))
-  (sb-concurrency:frlock-write (*tcl-ev-queue-lock*)
+  (bt2:with-lock-held (*tcl-ev-queue-lock*)
     (let ((ev-ptr     (tcl-alloc (cffi:foreign-type-size
                                   '(:struct tcl-ev-queue-cb-evt-s))))
           (cb-counter (incf *tcl-ev-queue-cb-counter*)))
