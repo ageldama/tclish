@@ -178,7 +178,14 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
   +tcl-error+)
 
 
-(defvar *def-cmd-ns-prefix* "")
+(defvar *def-cmd-ns* "")
+
+
+(defun %compose-ns-fqn (ns name)
+  (if (zerop (length ns))
+      name
+      ;; else:
+      (concatenate 'string ns "::" name)))
 
 
 (defmacro def-cmd
@@ -187,7 +194,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
         (interp     '*tcl-interp*)
         (lambda-list '(interp args))
         (args-type  :strings)  ;; (:strings :objs)
-        (ns-prefix  *def-cmd-ns-prefix*)
+        (ns         '*def-cmd-ns*)
         (wrap-p     t))
      &rest body)
   (let* ((create-command-func
@@ -196,8 +203,8 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
              (:objs    'create-obj-command)
              (t
               (error "Unsupported args-type (should be :strings or :objs)"))))
-         (%result (gensym))
-         (fqn-name    (concatenate 'string ns-prefix name))
+         (%result   (gensym))
+         (%fqn-name (gensym))
          (wrapped-body
            (if wrap-p
                `((handler-case
@@ -205,12 +212,13 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
                        (wrap-result ,interp ,%result))
                    (error (c) (wrap-error ,interp c))))
                body)))
-    `(,create-command-func
-      ,interp
-      ,fqn-name
-      (lambda ,lambda-list
-        (declare (ignorable ,@lambda-list))
-        ,@wrapped-body))))
+    `(let ((,%fqn-name (%compose-ns-fqn ,ns ,name)))
+       (,create-command-func
+        ,interp
+        ,%fqn-name
+        (lambda ,lambda-list
+          (declare (ignorable ,@lambda-list))
+          ,@wrapped-body)))))
 
 
 

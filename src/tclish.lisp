@@ -16,9 +16,11 @@
    #:queue-evt-func
 
    #:def-cmd
-   #:*def-cmd-ns-prefix*
+   #:*def-cmd-ns*
    #:interp
    #:args
+
+   #:create-ns
 
    #:queue-evt
    #:interp

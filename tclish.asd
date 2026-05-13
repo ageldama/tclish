@@ -22,6 +22,7 @@
                  (:file "apply-lambda")
                  (:file "do+chk")
                  (:file "zipfs")
+                 (:file "ns")
                  (:file "create-cmd")
                  (:file "evtq")
                  (:file "app-main")
