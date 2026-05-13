@@ -180,6 +180,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 (defvar *def-cmd-ns* "")
 
+(defvar *def-cmd-tracker* nil)
 
 (defun %compose-ns-fqn (ns name)
   (if (zerop (length ns))
@@ -197,6 +198,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
         (ns         '*def-cmd-ns*)
         (wrap-p     t))
      &rest body)
+
   (let* ((create-command-func
            (case args-type
              (:strings 'create-string-command)
@@ -212,7 +214,11 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
                        (wrap-result ,interp ,%result))
                    (error (c) (wrap-error ,interp c))))
                body)))
+
     `(let ((,%fqn-name (%compose-ns-fqn ,ns ,name)))
+       (when *def-cmd-tracker*
+         (funcall *def-cmd-tracker* ,%fqn-name :ns ,ns :name ,name))
+       ;;
        (,create-command-func
         ,interp
         ,%fqn-name

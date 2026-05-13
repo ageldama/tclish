@@ -24,6 +24,7 @@
                  (:file "zipfs")
                  (:file "ns")
                  (:file "create-cmd")
+                 (:file "ensemble")
                  (:file "evtq")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")

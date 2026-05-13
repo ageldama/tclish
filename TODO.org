@@ -7,3 +7,9 @@
 
 * TODO compare with raw tcl/tk c api, ltk
 
+* TODO obj-set-var2
+  #+begin_src lisp
+    (tcl-obj-set-var2 *tcl-interp*
+                      (->tcl-string-obj "tracked")
+                      (cffi:null-pointer)
+  #+end_src

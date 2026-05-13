@@ -13,6 +13,7 @@
                  (:file "04-redir-stdout")
                  (:file "05-tk-main-loop")
                  (:file "06-def-cmd-in-ns")
+                 (:file "07-ensemble")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"

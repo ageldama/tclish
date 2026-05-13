@@ -34,6 +34,7 @@ Write your new Tcl/Tk commands in Lisp:
 1. *Unstable* [Redirecting Tcl standard channel to Lisp stream](./examples/04-redir-stdout.lisp)
 1. [Tk "main-loop"](./examples/05-tk-main-loop.lisp)
 1. [def-cmd in namespace](./examples/06-def-cmd-in-ns.lisp)
+1. [Tcl Ensembles + def-cmd](./examples/07-ensemble.lisp)
 
 
 ```lisp

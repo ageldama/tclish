@@ -21,17 +21,33 @@
                         `(,i ,@args))))))
 
 
-(defun kv-list->dict (interp lst)
-  (let ((dict  (tcl-new-dict-obj)))
-    (iter (for (k . v) in lst)
-      (as k-obj = (->tcl-string-obj k))
-      (if (listp v)
-          (tcl-dict-obj-put interp dict
-                            k-obj (kv-list->dict interp v))
-          ;; else:
-          (tcl-dict-obj-put interp dict
-                            k-obj (->tcl-string-obj v))))
-    dict))
+
+
+(defun ht->tcl-dict (interp ht)
+  (iter (with dict = (tcl-new-dict-obj))
+    (for (k v) in-hashtable ht)
+    (as k-obj = (->tcl-string-obj k))
+    (if (hash-table-p v)
+        (tcl-dict-obj-put interp dict
+                          k-obj (ht->tcl-dict interp v))
+        ;; else:
+        (tcl-dict-obj-put interp dict
+                          k-obj (->tcl-string-obj v)))
+    (finally (return dict))))
+
+
+
+(defun alist->tcl-dict (interp lst)
+  (iter (with dict = (tcl-new-dict-obj))
+    (for (k . v) in lst)
+    (as k-obj = (->tcl-string-obj k))
+    (if (listp v)
+        (tcl-dict-obj-put interp dict
+                          k-obj (alist->tcl-dict interp v))
+        ;; else:
+        (tcl-dict-obj-put interp dict
+                          k-obj (->tcl-string-obj v)))
+    (finally (return dict))))
 
 
 (defun list-of-tcl-obj->tcl-list-obj (obj-list)

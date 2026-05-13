@@ -17,10 +17,15 @@
 
    #:def-cmd
    #:*def-cmd-ns*
+   #:*def-cmd-tracker*
    #:interp
    #:args
 
-   #:create-ns
+   #:tcl-ns
+
+   #:track-def-cmds
+   #:create-ensemble
+   #:def-ensemble
 
    #:queue-evt
    #:interp
@@ -31,7 +36,8 @@
 
    #:->tcl-string-obj
    #:list->tcl-string-objs
-   #:kv-list->dict
+   #:alist->tcl-dict
+   #:ht->tcl-dict
 
    #:list-of-tcl-obj->tcl-list-obj
    #:list-to-pointer-array
