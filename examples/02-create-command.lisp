@@ -10,20 +10,17 @@
   (app-main ()
 
             ;; body:
-            (create-command
-                (:interp *tcl-interp* :name "p")
-                (format t "~{~A~}~%" (cdr args)))
+            (create-command ("p")
+                            (format t "~{~A~}~%" (cdr args)))
 
-            (create-command
-                (:interp *tcl-interp* :name "do_sth_1")
-                (format t "STH-1: ~a~%" interp)
-                :sth-1-done)
+            (create-command ("do_sth_1")
+                            (format t "STH-1: ~a~%" interp)
+                            :sth-1-done)
 
-            (create-command
-                (:interp *tcl-interp* :name "do_sth_err")
-                (format t "STH-ERR: ~a~%" interp)
-                (error "err!err!")
-                :sth-err-done)
+            (create-command ("do_sth_err")
+                            (format t "STH-ERR: ~a~%" interp)
+                            (error "err!err!")
+                            :sth-err-done)
 
             ;;
             (do+chk (tcl-eval :error? nil)

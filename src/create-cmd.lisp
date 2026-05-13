@@ -182,9 +182,9 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defmacro create-command
-    ((&key
-        interp
-        name
+    ((name
+      &key
+        (interp     '*tcl-interp*)
         (lambda-list '(interp args))
         (args-type  :strings)  ;; (:strings :objs)
         (wrap-p     t))

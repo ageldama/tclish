@@ -5,7 +5,7 @@
 
 (defun cmd/p (interp &key (cmd-name "p"))
   (create-command
-      (:interp interp :name cmd-name)
+      (cmd-name :interp interp)
       (format t "~{~A~}~%" (cdr tclish:args))))
 
 
