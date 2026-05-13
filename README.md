@@ -55,6 +55,11 @@ Write your new Tcl/Tk commands in Lisp:
   ```
 
 
+## Supporting
+
+Enjoying this project? Consider supporting its growth via the Ethereum
+address in [my profile](https://github.com/ageldama).
+
 
 
 ## License
