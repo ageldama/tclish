@@ -54,6 +54,11 @@
    #:tcl-obj-list->objv
    #:free-tcl-objv
 
+   #:lisp-value-or-nullptr
+
+   #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
+   #:get-var #:set-var #:tcl-var
+
    #:apply-lambda
 
    #:wrap-error*

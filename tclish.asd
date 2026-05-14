@@ -18,6 +18,7 @@
                 ((:file "tclish-cffi")
                  (:file "tclish")
                  (:file "value-juggling")
+                 (:file "var")
                  (:file "do+chk")
                  (:file "eval")
                  (:file "apply-lambda")

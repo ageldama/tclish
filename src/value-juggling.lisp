@@ -7,19 +7,25 @@
   (lambda (v) (format nil "~a" v)))
 
 
-(defun ->tcl-string-obj (val)
+(defun ->tcl-string-obj% (val)
   (let ((s-val  (funcall *stringify-for-tcl-obj-func*
                          val)))
     (cffi:with-foreign-string (cstr-val s-val)
       (tcl-new-string-obj cstr-val -1))))
 
+(defun ->tcl-string-obj (val)
+  (if (null val)
+      (cffi:null-pointer)
+      ;; else:
+      (if (cffi:pointerp val)
+          val
+          (->tcl-string-obj% val))))
+
 
 (defun list->tcl-string-list (lst)
   "(LIST lisp-value-1 tcl-obj-2 ... lisp-value-N) => (LIST tcl-obj-1 tcl-obj-2 ... tcl-obj-N)"
   (iter (for i in lst)
-    (if (cffi:pointerp i)
-        (collect i)
-        (collect (->tcl-string-obj i)))))
+    (collect (->tcl-string-obj i))))
 
 
 
@@ -58,9 +64,7 @@
     (counting item into counter)
     (tcl-list-obj-append-element (cffi:null-pointer)
                                  list-ptr
-                                 (if (cffi:pointerp item)
-                                     item
-                                     (->tcl-string-obj item)))
+                                 (->tcl-string-obj item))
     (finally (return (values list-ptr counter)))))
 
 
@@ -104,5 +108,10 @@
 
 (defun free-tcl-objv (objv-ptr)
   (cffi:foreign-free objv-ptr))
+
+
+
+(defun lisp-value-or-nullptr (val)
+  (if val val (cffi:null-pointer)))
 
 
