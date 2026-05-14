@@ -1,18 +1,17 @@
 (in-package :tclish)
 
 
+(defvar *def-cmd-tracking-ht* (make-hash-table))
+
+
 (defmacro track-def-cmds
-    ((&key var-ensemble-map-ht) &rest body)
-  (let ((%ensemble-map-ht (gensym)))
-    `(let* ((,%ensemble-map-ht  (make-hash-table))
-            ,@(when var-ensemble-map-ht
-                `((,var-ensemble-map-ht ,%ensemble-map-ht)))
-            (*def-cmd-tracker*  (lambda (fqn &key ns name)
-                                  (declare (ignore ns))
-                                  (setf (gethash name ,%ensemble-map-ht)
-                                        fqn))))
-       ,@body
-       ,%ensemble-map-ht)))
+    (&rest body)
+  `(let* ((*def-cmd-tracker*      (lambda (fqn &key ns name)
+                                    (declare (ignore ns))
+                                    (setf (gethash name *def-cmd-tracking-ht*)
+                                          fqn))))
+     ,@body
+     *def-cmd-tracking-ht*))
 
 
 (defun create-ensemble
@@ -32,16 +31,23 @@
 
 (defmacro def-ensemble
     ((ns-fqn
-      &key (interp '*tcl-interp*)
-        var-ensemble-map-ht)
+      &key (interp '*tcl-interp*))
      &rest body)
   ;;
-  (let ((%ensemble-map-ht (gensym)))
-    `(let* ((*def-cmd-ns* ,ns-fqn)
-            (,%ensemble-map-ht
-              (track-def-cmds
-                  (:var-ensemble-map-ht ,var-ensemble-map-ht)
-                  ,@body)))
-       (create-ensemble ,ns-fqn ,%ensemble-map-ht
-                        :interp ,interp))))
+  `(let* ((*def-cmd-ns*           ,ns-fqn)
+          (*def-cmd-tracking-ht*  (make-hash-table)))
+     (track-def-cmds ,@body)
+     (create-ensemble ,ns-fqn *def-cmd-tracking-ht*
+                      :interp ,interp)))
 
+
+(defun ensemble/include (ensemble-name &key cmd-fqn)
+  (setf (gethash ensemble-name *def-cmd-tracking-ht*) cmd-fqn))
+
+(defun ensemble/exclude (ensemble-name)
+  (remhash ensemble-name *def-cmd-tracking-ht*))
+
+(defun ensemble/rename (from-ensemble &key to-ensemble)
+  (let ((fqn-name (gethash from-ensemble *def-cmd-tracking-ht*)))
+    (ensemble/exclude from-ensemble)
+    (ensemble/include to-ensemble :cmd-fqn fqn-name)))

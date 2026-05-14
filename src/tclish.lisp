@@ -23,9 +23,13 @@
 
    #:tcl-ns
 
+   #:*def-cmd-tracking-ht*
    #:track-def-cmds
    #:create-ensemble
    #:def-ensemble
+   #:ensemble/include
+   #:ensemble/exclude
+   #:ensemble/rename
 
    #:queue-evt
    #:interp
