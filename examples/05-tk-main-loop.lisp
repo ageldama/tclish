@@ -8,5 +8,5 @@
 
 (defun main-tk-main-loop ()
   (app-main (:tk-init? t :tk-main-loop? t)
-            (eval-str "button .btn -text {<esc>:q!} -command {destroy .}"
+            (eval-tcl "button .btn -text {<esc>:q!} -command {destroy .}"
                       "pack .btn")))

@@ -8,15 +8,13 @@
 
 (defun main-apply-lambda ()
   (app-main ()
-            (cmd/p *tcl-interp*)
+            (def-cmd/p)
 
             (def-cmd ("gimme_lambda")
                      (let ((lambda-list  (second tclish:args))
                            (lambda-args  (cddr   tclish:args)))
-                       (apply-lambda tclish:interp
-                                     lambda-list
-                                     lambda-args)))
+                       (apply-lambda lambda-list lambda-args)))
 
             ;;
-            (eval-str "p [gimme_lambda {{x y} {expr $x ** $y}} 3 4]")))
+            (eval-tcl "gimme_lambda {{x y} {expr $x ** $y}} 3 4")))
 

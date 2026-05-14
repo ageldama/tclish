@@ -30,7 +30,7 @@
                      (format t "DO_STH_ANOTHER: ~a ~%" interp))
 
             ;;
-            (eval-str "do_sth_in_thread"
+            (eval-tcl "do_sth_in_thread"
                       "vwait forever"
                       "do_sth_another")))
 

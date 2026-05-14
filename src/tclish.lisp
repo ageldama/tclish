@@ -23,25 +23,36 @@
 
    #:tcl-ns
 
+   #:*def-cmd-tracking-ht*
    #:track-def-cmds
    #:create-ensemble
    #:def-ensemble
+   #:ensemble/include
+   #:ensemble/exclude
+   #:ensemble/rename
 
    #:queue-evt
    #:interp
    #:thread-id
    #:cb-counter
 
-   #:cmd/p
+   #:def-cmd/p
 
+   #:*stringify-for-tcl-obj-func*
    #:->tcl-string-obj
-   #:list->tcl-string-objs
+   #:list->tcl-string-list
+   #:list->tcl-list
+   #:tcl-obj-list->tcl-list
+
+   #:with-tcl-objv
+   #:tcl-objv
+   #:tcl-objc
+
    #:alist->tcl-dict
    #:ht->tcl-dict
 
-   #:list-of-tcl-obj->tcl-list-obj
-   #:list-to-pointer-array
-   #:free-pointer-array
+   #:tcl-obj-list->objv
+   #:free-tcl-objv
 
    #:apply-lambda
 
@@ -49,7 +60,12 @@
    #:wrap-error
    #:wrap-result
 
-   #:eval-str
+   #:result-as
+   #:eval-tcl
+   #:eval-tcl/str
+   #:eval-tcl/tcl-obj-list
+   #:eval-tcl/tcl-string
+   #:eval-tcl/tcl-objv
 
    #:app-main
    ))
