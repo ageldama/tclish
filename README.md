@@ -72,7 +72,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 |              | 😅 Not widely tested, documented (not yet, working on it)                         |
 |              | 😍 Focused on integrating Tcl/Tk easily with Lisp                                 |
 |              | 😍 ZipFS supports builtin                                                         |
-|              | 🤩 I love to working with it!                                                     |
+|              | 🤩 I love working with it!                                                        |
 |              |                                                                                   |
 |      **ltk** | using `wish` subprocess + pipe communication, thus not Tcl 8.6/9.0 specific.      |
 |              | 😍 No need to worry about DLLs, FFIs.                                             |
