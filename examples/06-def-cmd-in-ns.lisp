@@ -22,7 +22,7 @@
                      (format t "GLOBAL~%"))
 
             ;;
-            (eval-str "cmd_global"
+            (eval-tcl "cmd_global"
                       "::myns::cmd_inside"
                       "p {* ns :: => \[ } [namespace children :: *] { \]}"
                       "p {* ns ::myns => \[ } [namespace children ::myns *] { \]}"

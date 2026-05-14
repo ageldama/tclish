@@ -19,7 +19,7 @@
 
 
             ;;
-            (eval-str "p [cmd_global]"
+            (eval-tcl "p [cmd_global]"
                       "p [myns a]"
                       "p [myns b]"
                       )))

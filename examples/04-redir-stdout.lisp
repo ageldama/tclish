@@ -9,5 +9,5 @@
 (defun main-redir-stdout ()
   (app-main (:stdout-stream *standard-output*
              :do+chk/error? nil)
-            (eval-str "puts {안녕하슈! HELLO?!}")))
+            (eval-tcl "puts {안녕하슈! HELLO?!}")))
 

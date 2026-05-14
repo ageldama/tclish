@@ -32,7 +32,7 @@ Interested? Please refer the "Examples" section below.
     (:tk-init? t
      :tk-main-loop? t)
 
-    (eval-str "button .btn -text {<esc>:q!} -command {destroy .}"
+    (eval-tcl "button .btn -text {<esc>:q!} -command {destroy .}"
               "pack .btn"))
 ```
 
@@ -49,7 +49,7 @@ Interested? Please refer the "Examples" section below.
     (format t "HI!: ~a ~a~%" interp args)
     :I-AM-A-RESULT-VALUE)
 
-(eval-str "AWESOME_PROC"
+(eval-tcl "AWESOME_PROC"
           "puts {WAS Awesome}")
 ```
 
@@ -105,7 +105,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 ```
 
 1. [`tk_messageBox`](./examples/01-tk-msgbox.lisp)
-   1. Very basic usage of `app-main` and `eval-str`.
+   1. Very basic usage of `app-main` and `eval-tcl`.
 
 1. [Create Tcl command with ease](./examples/02-def-cmd.lisp)
    1. Writing new Tcl command written in Lisp.
@@ -137,7 +137,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
    1. Invoking callback (Tcl lambda list) from custom command written
       in Lisp.
 
-1. [Getting result value from Tcl code evaluations](./examples/09-eval-str-result.lisp)
+1. [Getting result value from Tcl code evaluations](./examples/09-eval-tcl-result.lisp)
 
 
 

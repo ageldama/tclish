@@ -10,6 +10,6 @@
   (app-main (:tk-init? t
              :tk-main-loop? nil
              :after-init (format t "here we go~%"))
-            (eval-str "tk_messageBox -message {안녕하슈! Hello!}")))
+            (eval-tcl "tk_messageBox -message {안녕하슈! Hello!}")))
 
 

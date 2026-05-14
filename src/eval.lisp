@@ -1,6 +1,6 @@
 (in-package :tclish)
 
-(defun eval-str (&rest strs)
+(defun eval-tcl (&rest strs)
   (assert (and *tcl-interp*
                (not (cffi:null-pointer-p *tcl-interp*)))
           (*tcl-interp*))

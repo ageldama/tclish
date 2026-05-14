@@ -49,7 +49,7 @@
    #:wrap-error
    #:wrap-result
 
-   #:eval-str
+   #:eval-tcl
 
    #:app-main
    ))

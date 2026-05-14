@@ -34,6 +34,6 @@
                      (format t "~{~A~}~%" (cdr args)))
 
             ;;
-            (eval-str "p [cmd_1]"
+            (eval-tcl "p [cmd_1]"
                       "p [cmd_err]")))
 
