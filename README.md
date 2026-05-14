@@ -40,7 +40,7 @@ Lisp:
 |              | 😅 Not widely tested, documented (not yet, working on it)                         |
 |              | 😍 Focused on integrating Tcl/Tk easily with Lisp                                 |
 |              | 🤩 I love to working with it!                                                     |
-|-------------:|:----------------------------------------------------------------------------------|
+|              |                                                                                   |
 |          ltk | using `wish` subprocess + pipe communication, thus not Tcl 8.6/9.0 specific.      |
 |              | 😍 No need to worry about DLLs, FFIs.                                             |
 |              | 😍 Very easy to writing a Tk application in Lisp.                                 |
