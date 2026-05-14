@@ -2,10 +2,12 @@
 (defpackage #:tclish
   (:use #:cl #:iterate #:raw-cffi-tcl9 #:tclish/cffi)
   (:export
-   #:*tcl-interp*
 
-   #:*do+chk/error?*
-   #:do+chk
+   #:*tcl-interp*
+   #:with-interp #:interp-deleted? #:interp-active?
+
+   #:*do+chk/error?* #:do+chk
+   #:with-tcl-error/thrown #:with-tcl-error/result
 
    #:mnt-zipfs
    #:umnt-zipfs
