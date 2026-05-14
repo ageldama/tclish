@@ -4,7 +4,10 @@
   (:export
 
    #:*tcl-interp*
-   #:with-interp #:interp-deleted? #:interp-active?
+   #:with-interp #:interp/deleted? #:interp/active?
+
+   #:<tcl-error>
+   #:pack-tcl-error
 
    #:*do+chk/error?* #:do+chk
    #:with-tcl-error/thrown #:with-tcl-error/result
@@ -57,6 +60,8 @@
    #:free-tcl-objv
 
    #:lisp-value-or-nullptr
+   #:lisp-bool->c-int
+   #:nullptr->nil
 
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
    #:get-var #:set-var #:tcl-var #:unset-var

@@ -114,4 +114,12 @@
 (defun lisp-value-or-nullptr (val)
   (if val val (cffi:null-pointer)))
 
+
+(defun lisp-bool->c-int (val) (if val 1 0))
+
+
+(defun nullptr->nil (cval)
+  (if (cffi:null-pointer-p cval) nil cval))
+
+
 
