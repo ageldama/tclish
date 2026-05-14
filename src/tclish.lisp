@@ -34,14 +34,21 @@
 
    #:def-cmd/p
 
+   #:*stringify-for-tcl-obj-func*
    #:->tcl-string-obj
-   #:list->tcl-string-objs
+   #:list->tcl-string-list
+   #:list->tcl-list
+   #:tcl-obj-list->tcl-list
+
+   #:with-tcl-objv
+   #:tcl-objv
+   #:tcl-objc
+
    #:alist->tcl-dict
    #:ht->tcl-dict
 
-   #:list-of-tcl-obj->tcl-list-obj
-   #:list-to-pointer-array
-   #:free-pointer-array
+   #:tcl-obj-list->objv
+   #:free-tcl-objv
 
    #:apply-lambda
 
@@ -49,6 +56,7 @@
    #:wrap-error
    #:wrap-result
 
+   #:result-as
    #:eval-tcl
 
    #:app-main

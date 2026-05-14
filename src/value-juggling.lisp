@@ -3,22 +3,23 @@
 
 
 
-(defun ->tcl-string-obj
-    (val
-     &key
-       (str-func (lambda (v) (format nil "~a" v))))
-  (let ((s-val  (funcall str-func val)))
+(defvar *stringify-for-tcl-obj-func*
+  (lambda (v) (format nil "~a" v)))
+
+
+(defun ->tcl-string-obj (val)
+  (let ((s-val  (funcall *stringify-for-tcl-obj-func*
+                         val)))
     (cffi:with-foreign-string (cstr-val s-val)
       (tcl-new-string-obj cstr-val -1))))
 
 
-(defun list->tcl-string-objs
-    (lst &rest args)
+(defun list->tcl-string-list (lst)
+  "(LIST lisp-value-1 tcl-obj-2 ... lisp-value-N) => (LIST tcl-obj-1 tcl-obj-2 ... tcl-obj-N)"
   (iter (for i in lst)
     (if (cffi:pointerp i)
         (collect i)
-        (collect (apply #'->tcl-string-obj
-                        `(,i ,@args))))))
+        (collect (->tcl-string-obj i)))))
 
 
 
@@ -50,24 +51,58 @@
     (finally (return dict))))
 
 
-(defun list-of-tcl-obj->tcl-list-obj (obj-list)
+(defun list->tcl-list (lst)
+  "(LIST lisp-value-1 tcl-obj-2 ... lisp-value-N) => (VALUES tcl-list tcl-list-length)"
+  (iter (with list-ptr = (tcl-new-list-obj 0 (cffi:null-pointer)))
+    (for item in lst)
+    (counting item into counter)
+    (tcl-list-obj-append-element (cffi:null-pointer)
+                                 list-ptr
+                                 (if (cffi:pointerp item)
+                                     item
+                                     (->tcl-string-obj item)))
+    (finally (return (values list-ptr counter)))))
+
+
+(defun tcl-obj-list->tcl-list (obj-list)
+  "(LIST tcl-obj-1 ... tcl-obj-N) => (VALUES tcl-list tcl-list-length)"
   (let ((list-ptr (tcl-new-list-obj 0 (cffi:null-pointer))))
     (dolist (obj obj-list)
       (tcl-list-obj-append-element (cffi:null-pointer)
                                    list-ptr obj))
-    list-ptr))
+    (values list-ptr (length obj-list))))
 
 
-(defun list-to-pointer-array (lisp-list)
-  (let* ((count (length lisp-list))
-         (array-ptr (cffi:foreign-alloc :pointer :count count)))
+(defmacro with-tcl-objv ((lst
+                          &key (v-tcl-objv 'tcl-objv)
+                            (v-tcl-objc 'tcl-objc))
+                         &rest body)
+  (let ((%lst-tcl-objs   (gensym))
+        (%result         (gensym)))
+    `(let* ((,%lst-tcl-objs (list->tcl-string-list ,lst))
+            (,v-tcl-objc    (length ,lst))
+            (,v-tcl-objv    (tcl-obj-list->objv ,%lst-tcl-objs))
+            (,%result       nil))
+       (unwind-protect
+            (progn (dolist (obj ,%lst-tcl-objs) (tcl-incr-ref-count obj))
+                   (setf ,%result (progn ,@body))
+                   (dolist (obj ,%lst-tcl-objs) (tcl-decr-ref-count obj)))
+         ;; cleanup:
+         (free-tcl-objv ,v-tcl-objv))
+       ,%result)))
+
+
+(defun tcl-obj-list->objv (tcl-obj-list)
+  "(LIST tcl-obj-1 ... tcl-obj-N) => Tcl_Obj*[]"
+  (let* ((count    (length tcl-obj-list))
+         (objv-ptr (cffi:foreign-alloc :pointer :count count)))
     (loop for i from 0
-          for item in lisp-list
-          do (setf (cffi:mem-aref array-ptr :pointer i) item))
-    array-ptr))
+          for obj-ptr in tcl-obj-list
+          do (setf (cffi:mem-aref objv-ptr :pointer i) obj-ptr))
+    (values objv-ptr count)))
 
 
-(defun free-pointer-array (ptr-list)
-  (cffi:foreign-free ptr-list))
+(defun free-tcl-objv (objv-ptr)
+  (cffi:foreign-free objv-ptr))
 
 

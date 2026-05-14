@@ -13,8 +13,7 @@
             (def-cmd ("gimme_lambda")
                      (let ((lambda-list  (second tclish:args))
                            (lambda-args  (cddr   tclish:args)))
-                       (apply-lambda lambda-list
-                                     lambda-args)))
+                       (apply-lambda lambda-list lambda-args)))
 
             ;;
             (eval-tcl "gimme_lambda {{x y} {expr $x ** $y}} 3 4")))
