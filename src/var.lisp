@@ -3,10 +3,6 @@
 (defvar *var-flags* +tcl-leave-err-msg+)
 
 
-
-;; TODO unset
-
-
 (defun get-var/str (var-name &key array-subs)
   (let ((result (tcl-get-var2 *tcl-interp*
                 var-name
@@ -77,3 +73,12 @@
 
 (defsetf tcl-var (var-name &key array-subs (as :string)) (new-val)
   `(set-var ,var-name ,new-val :array-subs ,array-subs :as ,as))
+
+
+(defun unset-var (var-name &key array-subs)
+  (do+chk (tcl-unset-var2)
+          *tcl-interp*
+          var-name (lisp-value-or-nullptr array-subs)
+          *var-flags*))
+
+

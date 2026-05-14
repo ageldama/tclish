@@ -57,7 +57,7 @@
    #:lisp-value-or-nullptr
 
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
-   #:get-var #:set-var #:tcl-var
+   #:get-var #:set-var #:tcl-var #:unset-var
 
    #:apply-lambda
 

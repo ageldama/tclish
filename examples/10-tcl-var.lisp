@@ -7,32 +7,43 @@
 
 
 (defun main ()
-  (app-main ()
-            ;; Getting error on reading non-existing variable:
-            (let ((*do+chk/error?* t))
-              (handler-case (tcl-var "unknownxxx")
-                (error (c) (format t "OK = ERR-CAUGHT: ~a~%" c)))
+  (macrolet ((it-is-okay-to-error (&rest body)
+               (let ((%erred (gensym)))
+                 `(let ((,%erred nil))
+                    (handler-case (progn ,@body)
+                      (error (c) (setf ,%erred c)
+                        (format t "OK = ERR-CAUGHT: ~a~%" c)))
+                    (assert ,%erred (,%erred)
+                            "Supposed to raise error, but wasn't!")))))
+    ;;
+    (app-main (:do+chk/error? t)
+              ;; Getting error on reading non-existing variable:
+              (it-is-okay-to-error (tcl-var "unknownxxx"))
 
-              (handler-case (tcl-var "unknownxxx" :as :obj)
-                (error (c) (format t "OK = ERR-CAUGHT: ~a~%" c))))
+              (it-is-okay-to-error (tcl-var "unknownxxx" :as :obj))
 
-            ;; get/set simple variables:
-            (setf (tcl-var "foo") "bar"
-                  (tcl-var "fruits") "{apple banana pineapple}")
-            (format t "FRUITS: ~a~%" (tcl-var "fruits"))
+              ;; get/set simple variables:
+              (setf (tcl-var "foo") "bar"
+                    (tcl-var "fruits") "{apple banana pineapple}")
+              (format t "FRUITS: ~a~%" (tcl-var "fruits"))
 
-            ;; namespace:
-            (let ((cities "{seoul gwangju wonju gangreung paju goyang}"))
+              ;; unset-var
+              (unset-var "foo")
+              (it-is-okay-to-error (tcl-var "foo"))
 
-              ;; this should fail:
-              (handler-case (setf (tcl-var "::myns::cities") cities)
-                (error (c) (format t "OK = ERR-CAUGHT: ~a~%" c)))
+              (it-is-okay-to-error (unset-var "unknownxxx"))
 
-              ;; namespace, try again:
-              (tcl-ns "::myns")
-              (setf (tcl-var "::myns::cities") cities))
+              ;; namespace:
+              (let ((cities "{seoul gwangju wonju gangreung paju goyang}"))
 
-            (format t "cities (finally): ~a ~a~%"
-                    (eval-tcl "info vars ::myns::*")
-                    (tcl-var "::myns::cities"))))
+                ;; this should fail:
+                (it-is-okay-to-error (setf (tcl-var "::myns::cities") cities))
+
+                ;; namespace, try again:
+                (tcl-ns "::myns")
+                (setf (tcl-var "::myns::cities") cities))
+
+              (format t "cities (finally): ~a ~a~%"
+                      (eval-tcl "info vars ::myns::*")
+                      (tcl-var "::myns::cities")))))
 

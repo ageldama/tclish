@@ -139,6 +139,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 1. [Getting result value from Tcl code evaluations](./examples/09-eval-tcl-result.lisp)
 
+1. [Getting, Setting, and Unsetting Tcl variables with Tcl namespaces](./examples/10-tcl-var.lisp)
 
 
 ## Dependencies
