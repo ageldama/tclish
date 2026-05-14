@@ -9,12 +9,13 @@
          (objs-args  (list->tcl-string-objs args))
          (objv-list  `(,(->tcl-string-obj "apply") ,lambda-obj ,@objs-args))
          (objv       (list-to-pointer-array objv-list))
-         (result     nil))
+         (result     nil)
+         (*tcl-interp* interp))
 
     (unwind-protect
          (progn
            (dolist (i objv-list) (tcl-incr-ref-count i))
-           (do+chk (tcl-eval-objv :interp interp :error? t)
+           (do+chk (tcl-eval-objv)
                    interp (length objv-list) objv 0)
            (setf result
                  (if result-as-obj?

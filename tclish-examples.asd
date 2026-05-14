@@ -14,6 +14,7 @@
                  (:file "05-tk-main-loop")
                  (:file "06-def-cmd-in-ns")
                  (:file "07-ensemble")
+                 (:file "08-apply-lambda")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"

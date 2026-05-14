@@ -133,7 +133,9 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
    1. How to group custom macros into a Tcl ensembles with
       `def-ensemble` and `def-cmd` macros.
 
-
+1. [Applying Tcl Lambda](./examples/08-apply-lambda.lisp)
+   1. Invoking callback (Tcl lambda list) from custom command written
+      in Lisp.
 
 
 
