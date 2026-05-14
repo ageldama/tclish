@@ -17,18 +17,50 @@
 ## Introduction
 
 **`tclish`** is a Lisp wrapper around Tcl/Tk 9.0 C APIs, which
-provides easier ways to interact with Tcl/Tk:
+provides easier ways to interact with Tcl/Tk.
 
-1. Embedding Tcl/Tk Interpreter in Lisp application.
-2. Extending Tcl/Tk in Lisp.
-3. Interacting with Tcl/Tk from Lisp.
-4. All with Easy and Powerful Lisp DSLs.
+All with Easy and Powerful Lisp DSLs.
 
 Interested? Please refer the "Examples" section below.
 
 
-and a comparasion table with other great Tcl/Tk libraries for Common
-Lisp:
+
+### Embedding Tcl/Tk Interpreter in Lisp application
+
+```lisp
+(app-main
+    (:tk-init? t
+     :tk-main-loop? t)
+
+    (eval-str "button .btn -text {<esc>:q!} -command {destroy .}"
+              "pack .btn"))
+```
+
+* [ZipFS](https://www.tcl-lang.org/man/tcl8.7/TclCmd/zipfs.html)
+  supports builtin, your Lisp executable image is the new
+  [Starkit](https://wiki.tcl-lang.org/page/Starkit) ⭐
+* (*NOTE* Tk DSL will be available soon, I'm working on it😅)
+
+
+### Extending Tcl/Tk in Lisp
+
+```lisp
+(def-cmd ("AWESOME_PROC")
+    (format t "HI!: ~a ~a~%" interp args)
+    :I-AM-A-RESULT-VALUE)
+
+(eval-str "AWESOME_PROC"
+          "puts {WAS Awesome}")
+```
+
+
+
+
+
+
+### Comparasion Table
+
+A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 |              | Points                                                                            |
 |-------------:|:----------------------------------------------------------------------------------|
@@ -39,6 +71,7 @@ Lisp:
 |              | 😍 Freely access internals of Tcl/Tk (a bit?)                                     |
 |              | 😅 Not widely tested, documented (not yet, working on it)                         |
 |              | 😍 Focused on integrating Tcl/Tk easily with Lisp                                 |
+|              | 😍 ZipFS supports builtin                                                         |
 |              | 🤩 I love to working with it!                                                     |
 |              |                                                                                   |
 |      **ltk** | using `wish` subprocess + pipe communication, thus not Tcl 8.6/9.0 specific.      |
@@ -65,16 +98,11 @@ Lisp:
 
 ## Examples
 
-Write your new Tcl/Tk commands in Lisp:
+
 ```lisp
-(def-cmd ("AWESOME_PROC")
-    (format t "HI!: ~a ~a~%" interp args)
-    :I-AM-A-RESULT-VALUE)
-
-(eval-str "AWESOME_PROC"
-          "puts {WAS Awesome}")
+> (ql:quickload :tclish-examples)
+> (tclish/examples/05-tk-main-loop:main-tk-main-loop)
 ```
-
 
 1. [`tk_messageBox`](./examples/01-tk-msgbox.lisp)
    1. Very basic usage of `app-main` and `eval-str`.
@@ -106,10 +134,6 @@ Write your new Tcl/Tk commands in Lisp:
       `def-ensemble` and `def-cmd` macros.
 
 
-```lisp
-> (ql:quickload :tclish-examples)
-> (tclish/examples/05-tk-main-loop:main-tk-main-loop)
-```
 
 
 
