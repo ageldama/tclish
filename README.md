@@ -14,6 +14,20 @@
 ...More hacks will be come, anytime soon. ;-)
 
 
+## Introduction
+
+**`tclish`** is a Lisp wrapper around Tcl/Tk 9.0 C APIs, which
+provides easier ways to interact with Tcl/Tk.
+
+Comparasion with other great Tcl/Tk libraries for Common Lisp:
+
+|      | : tclish : | : ltk : | : cl-simple-tk : |
+|------|------------|---------|------------------|
+| Pros |            |         |                  |
+|      |            |         |                  |
+
+
+
 
 ## Examples
 
@@ -29,12 +43,33 @@ Write your new Tcl/Tk commands in Lisp:
 
 
 1. [`tk_messageBox`](./examples/01-tk-msgbox.lisp)
+   1. Very basic usage of `app-main` and `eval-str`.
+
 1. [Create Tcl command with ease](./examples/02-def-cmd.lisp)
+   1. Writing new Tcl command written in Lisp.
+   1. Getting arguments from Tcl, returning a value, or raising an
+      error.
+
 1. [Threadin in Lisp-side, Tcl Event Queue](./examples/03-cmd-with-evtq.lisp)
+   1. Utilise thread in Lisp of custom Tcl command.
+   2. and How to give response in thread-safe way to the main Tcl
+      thread, from background thread. (... by using
+      `Tcl_ThreadQueueEvent`)
+
 1. *Unstable* [Redirecting Tcl standard channel to Lisp stream](./examples/04-redir-stdout.lisp)
+   1. Capture Tcl standard output channels (`stdout`, `stderr`) to
+      Lisp streams like `*standard-output*`
+
 1. [Tk "main-loop"](./examples/05-tk-main-loop.lisp)
+   1. Creating simple Tcl/Tk application easily with `app-main`-macro.
+
 1. [def-cmd in namespace](./examples/06-def-cmd-in-ns.lisp)
+   1. How to regist custom commands within Tcl namespaces with
+      `def-cmd`-macro.
+
 1. [Tcl Ensembles + def-cmd](./examples/07-ensemble.lisp)
+   1. How to group custom macros into a Tcl ensembles with
+      `def-ensemble` and `def-cmd` macros.
 
 
 ```lisp

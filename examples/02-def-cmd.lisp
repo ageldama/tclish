@@ -8,6 +8,18 @@
 
 (defun main-def-cmd ()
   (app-main (:do+chk/error? nil)
+
+            ;;; --- NOTE ---
+            ;;;
+            ;;; `tclish:interp' and `tclish:args' are passed to custom commands.
+            ;;;
+            ;;; `tclish:args' is a list of name of the command and
+            ;;; arguments passed from Tcl-side.
+            ;;;
+            ;;; For example, invoking a command ``cmd_foobar a b c''
+            ;;; from Tcl, in Lisp-side `tclish:args' is
+            ;;; ``("cmd_foobar" "a" "b" "c")''.
+
             ;; body:
             (def-cmd ("cmd_1")
                      (format t "CMD-1: ~a~%" interp)
