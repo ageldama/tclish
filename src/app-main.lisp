@@ -7,6 +7,8 @@
     ((&key
         (do+chk/error? t)
 
+        tcl-create-interp '(tcl-create-interp)
+
         tcl-init-subsystems?
         tk-init?
         tk-main-loop?
@@ -34,7 +36,7 @@
     `(progn
        ,@(when before-create-interp  (list before-create-interp))
        ,@(when tcl-init-subsystems?  `((tcl-init-subsystems)))
-       (let* ((*tcl-interp*     (tcl-create-interp))
+       (let* ((*tcl-interp*     ,tcl-create-interp)
               (*do+chk/error?*  ,do+chk/error?)
               ,@(when stdout-stream
                   `((,%stdout-chan
