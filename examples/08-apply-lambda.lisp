@@ -8,7 +8,7 @@
 
 (defun main-apply-lambda ()
   (app-main ()
-            (cmd/p *tcl-interp*)
+            (def-cmd/p)
 
             (def-cmd ("gimme_lambda")
                      (let ((lambda-list  (second tclish:args))

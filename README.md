@@ -137,6 +137,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
    1. Invoking callback (Tcl lambda list) from custom command written
       in Lisp.
 
+1. [Getting result value from Tcl code evaluations](./examples/09-eval-str-result.lisp)
 
 
 

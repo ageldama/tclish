@@ -8,7 +8,7 @@
 
 (defun main-ensemble ()
   (app-main ()
-            (cmd/p *tcl-interp*)
+            (def-cmd/p)
 
             (def-ensemble ("::myns")
                           (def-cmd ("a") :A)

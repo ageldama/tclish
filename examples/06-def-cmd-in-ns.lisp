@@ -8,7 +8,7 @@
 
 (defun main-def-cmd-in-ns ()
   (app-main ()
-            (cmd/p *tcl-interp*)
+            (def-cmd/p)
 
             ;; inside of `::myns'
             ;; (create-ns "::myns" :exports '("cmd_inside"))

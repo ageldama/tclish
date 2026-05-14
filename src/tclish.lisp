@@ -32,7 +32,7 @@
    #:thread-id
    #:cb-counter
 
-   #:cmd/p
+   #:def-cmd/p
 
    #:->tcl-string-obj
    #:list->tcl-string-objs
