@@ -58,6 +58,10 @@
 
    #:result-as
    #:eval-tcl
+   #:eval-tcl/str
+   #:eval-tcl/tcl-obj-list
+   #:eval-tcl/tcl-string
+   #:eval-tcl/tcl-objv
 
    #:app-main
    ))

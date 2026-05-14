@@ -18,8 +18,34 @@
                     (t          (collect el))))))
     ;;
     (dolist (cmd cmds*)
-      (do+chk (tcl-eval) *tcl-interp* cmd))
+      (cond
+        ((listp cmd) (case (first cmd)
+                       (:tcl-string (eval-tcl/tcl-string (second cmd)))
+                       (:tcl-objv   (eval-tcl/tcl-objv (third cmd) (second cmd)))
+                       (t           (eval-tcl/tcl-obj-list cmd))))
+        (t (eval-tcl/str cmd))))
     (result-as result-as)))
+
+
+(defun eval-tcl/str (cmd)
+  (do+chk (tcl-eval) *tcl-interp* cmd))
+
+
+(defun eval-tcl/tcl-obj-list (cmd-list)
+  "(list Tcl_Obj*)"
+  (with-tcl-objv (cmd-list)
+    (eval-tcl/tcl-objv tcl-objv tcl-objc)))
+
+
+(defun eval-tcl/tcl-string (cmd)
+  ":tcl-string (Tcl_Obj*)"
+  (do+chk (tcl-eval-obj) *tcl-interp* cmd))
+
+
+(defun eval-tcl/tcl-objv (objv objc)
+  ":tcl-objv (obj-count  Tcl_Obj**)"
+  (do+chk (tcl-eval-objv) *tcl-interp* objc objv 0))
+
 
 
 (defun result-as (result-as)
@@ -29,7 +55,3 @@
     (t       nil)))
 
 
-
-;; TODO (list Tcl_Obj*) => ... => tcl-eval-objv
-;; TODO :tcl-string Tcl_Obj*        => tcl-eval-obj-ex
-;; TODO :tcl-objv   [obj-count]  Tcl_Obj**       => tcl-eval-objv
