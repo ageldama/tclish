@@ -10,9 +10,20 @@
   (app-main ()
             (def-cmd/p)
 
+            (def-cmd ("cmd_another") :ANOTHER)
+
             (def-ensemble ("::myns")
                           (def-cmd ("a") :A)
-                          (def-cmd ("b") :B))
+
+                          (def-cmd ("b") :B)
+                          (ensemble/exclude "b")
+
+                          (def-cmd ("c") :CCCCC)
+                          (ensemble/rename "c" :to-ensemble "ccccc")
+
+                          (ensemble/include "another"
+                                            :cmd-fqn "::cmd_another")
+                          )
 
             ;; back to global scope:
             (def-cmd ("cmd_global") :GLOBAL)
@@ -21,6 +32,8 @@
             ;;
             (eval-tcl "p [cmd_global]"
                       "p [myns a]"
-                      "p [myns b]"
+                      "if {[catch {myns b}]} {p {REMOVED: 'myns b'}}"
+                      "p [myns ccccc]"
+                      "p [myns another]"
                       )))
 
