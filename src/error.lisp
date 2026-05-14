@@ -3,12 +3,14 @@
 
 (define-condition <tcl-error> (error)
   ((message :initarg :message :reader error-message))
-  (:report (lambda (c stream)
-             (format stream "Tcl Error: ~a" (error-message c)))))
+  (:report (lambda (condition stream)
+             (format stream "Tcl Error: ~a" (error-message condition)))))
 
 
 (defun pack-tcl-error
-    ;; TODO
-    (&key (condition '<tcl-error>) throw?)
+    (&rest args
+     &key (condition '<tcl-error>)
+       (throw? *do+chk/error?*)
+     &allow-other-keys)
   (apply (if throw? #'error #'make-condition)
          condition args))

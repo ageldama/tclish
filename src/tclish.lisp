@@ -6,8 +6,7 @@
    #:*tcl-interp*
    #:with-interp #:interp/deleted? #:interp/active?
 
-   #:<tcl-error>
-   #:pack-tcl-error
+   #:<tcl-error> #:error-message #:pack-tcl-error
 
    #:*do+chk/error?* #:do+chk
    #:with-tcl-error/thrown #:with-tcl-error/result

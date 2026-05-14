@@ -19,7 +19,7 @@
 (defun interp/child (child-name)
   (let ((child-interp (tcl-get-child *tcl-interp* child-name)))
     (if (cffi:null-pointer-p child-interp)
-        nil ;; TODO
+        (pack-tcl-error :message (tcl-get-string-result *tcl-interp*))
         child-interp)))
 
 (defun interp/parent ()
@@ -37,7 +37,6 @@
 
 
 #|
-
 
        int
        Tcl_CreateAlias(childInterp, childCmd, targetInterp, targetCmd,
