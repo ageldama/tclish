@@ -2,10 +2,20 @@
 (defpackage #:tclish
   (:use #:cl #:iterate #:raw-cffi-tcl9 #:tclish/cffi)
   (:export
+
    #:*tcl-interp*
 
-   #:*do+chk/error?*
-   #:do+chk
+   #:with-interp
+   #:interp/deleted? #:interp/active?
+   #:interp/safe? #:interp/parent #:interp/child
+   #:interp/create-child #:interp/interp-path
+   #:interp/expose-cmd #:interp/hide-cmd
+
+   #:<tcl-error> #:error-message #:pack-tcl-error
+   #:tcl-result-as-error
+
+   #:*do+chk/error?* #:do+chk
+   #:with-tcl-error/thrown #:with-tcl-error/result
 
    #:mnt-zipfs
    #:umnt-zipfs
@@ -54,7 +64,12 @@
    #:tcl-obj-list->objv
    #:free-tcl-objv
 
+   #:objv->tcl-obj-list
+
    #:lisp-value-or-nullptr
+   #:lisp-bool->c-int
+   #:nullptr->nil
+   #:<-tcl-int-bool
 
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
    #:get-var #:set-var #:tcl-var #:unset-var
@@ -73,6 +88,8 @@
    #:eval-tcl/tcl-objv
 
    #:app-main
+
+   #:alias/get #:alias/str #:alias/obj
    ))
 
 
