@@ -66,18 +66,29 @@
   (assert (link/var-type? var-type) (var-type))
   ;;
   (let ((cffi-type  (link/var-cffi-type var-type)))
-    (case cffi-type
-      ('(:pointer :char) (link/alloc-var-str default-val))
+    (cond
+      ((equal cffi-type
+              '(:pointer :char))
+       (link/alloc-var-str default-val))
       (t                 (let ((alloc-args (list cffi-type)))
                            (when default-val
                              (alexandria:nconcf alloc-args
                                                 (list :initial-element default-val)))
                            (apply #'cffi:foreign-alloc alloc-args))))))
 
+
+;; FIXME
 (defun link/alloc-var-str (default-str)
   (if default-str
+      (progn
       (str->tcl-alloced-charp default-str)
-      (cffi:make-pointer (cffi:pointer-address (cffi:null-pointer)))))
+      )
+      ;; else:
+      (progn
+        (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
+               (setf (cffi:mem-ref ptr :intptr) 0)
+                     ;;(cffi:pointer-address (cffi:null-pointer)))
+               ptr))))
 
 
 (defun link/free-var (ptr var-type)

@@ -136,21 +136,22 @@
 
 (defun str->tcl-alloced-charp (s)
   ;; step1. lisp-string => tcl-string
-  (let ((tcl-str-obj (tcl-new-string-obj s -1)))
-    (unwind-protect
-         (progn
-           (tcl-incr-ref-count tcl-str-obj)
-           ;; step.2 tcl-string => c-char* / Tcl_Alloc
-           (cffi:with-foreign-object (str-len-ptr 'tcl-size)
-             (let* ((str-ptr (tcl-get-string-from-obj
-                              tcl-str-obj str-len-ptr))
-                    (str-len (cffi:mem-ref str-len-ptr 'tcl-size))
-                    (char*   (tcl-alloc (1+ str-len))))
-               (c-memcpy char* str-ptr str-len)
-               (setf (cffi:mem-aref char* :char str-len) 0)
-               char*))))
-    ;; cleanup:
-    (tcl-decr-ref-count tcl-str-obj)))
+  (cffi:with-foreign-string (c-str s)
+    (let ((tcl-str-obj (tcl-new-string-obj c-str -1)))
+      (unwind-protect
+           (progn
+             (tcl-incr-ref-count tcl-str-obj)
+             ;; step.2 tcl-string => c-char* / Tcl_Alloc
+             (cffi:with-foreign-object (str-len-ptr 'tcl-size)
+               (let* ((str-ptr (tcl-get-string-from-obj/char*
+                                tcl-str-obj str-len-ptr))
+                      (str-len (cffi:mem-ref str-len-ptr 'tcl-size))
+                      (char*   (tcl-alloc (1+ str-len))))
+                 (c-memcpy char* str-ptr str-len)
+                 (setf (cffi:mem-aref char* :char str-len) 0)
+                 char*)))
+        ;; cleanup:
+        (tcl-decr-ref-count tcl-str-obj)))))
 
 
 
