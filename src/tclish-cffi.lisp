@@ -5,6 +5,7 @@
    #:c-memset*
    #:mem-zero
    #:c-strlen
+   #:c-memcpy
    #:c-string-array-to-string-list
    #:c-ptr-array-to-ptr-list
    ))
@@ -35,6 +36,11 @@
 (defcfun ("strlen" c-strlen) :size
   (dest :pointer))
 
+
+(defcfun ("memcpy" c-memcpy) :pointer
+  (dest :pointer)
+  (src  :pointer)
+  (n    :size))
 
 
 (defun c-string-array-to-string-list (ptr count)

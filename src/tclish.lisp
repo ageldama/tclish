@@ -71,6 +71,8 @@
    #:nullptr->nil
    #:<-tcl-int-bool
 
+   #:str->tcl-alloced-charp
+
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
    #:get-var #:set-var #:tcl-var #:unset-var
 
