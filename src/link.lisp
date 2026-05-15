@@ -77,18 +77,14 @@
                            (apply #'cffi:foreign-alloc alloc-args))))))
 
 
-;; FIXME
 (defun link/alloc-var-str (default-str)
   (if default-str
-      (progn
       (str->tcl-alloced-charp default-str)
-      )
       ;; else:
-      (progn
-        (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
-               (setf (cffi:mem-ref ptr :intptr) 0)
-                     ;;(cffi:pointer-address (cffi:null-pointer)))
-               ptr))))
+      (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
+        (setf (cffi:mem-ref ptr :intptr)
+              (cffi:pointer-address (cffi:null-pointer)))
+        ptr)))
 
 
 (defun link/free-var (ptr var-type)
