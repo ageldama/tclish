@@ -128,7 +128,53 @@
 
 
 
+(defclass <tcl-var-link> ()
+  ((ptr  :reader ptr
+         :initform (cffi:null-pointer))
+   (tcl-name   :reader tcl-name
+               :initarg :tcl-name)
+   (array-size :reader array-size
+               :initarg :array-size
+               :initform nil)
+   (var-type :initarg :var-type
+             :reader var-type)
+   (readonly? :initarg :readonly?
+              :initform nil
+              :reader readonly?)
+   (default-val :initarg :default-val
+                :initform nil
+                :reader default-val)
+   ))
 
 
+
+(defmethod initialize-instance :before
+    ((var-link <tcl-var-link>) &rest args)
+  (assert (member :tcl-name args) (args))
+  (assert (member :var-type args) (args)))
+
+
+
+(defmethod initialize-instance :after
+    ((var-link <tcl-var-link>) &key)
+  (with-slots (ptr) var-link
+    (setf ptr (if (array-size var-link)
+                  (link/+array (tcl-name var-link)
+                               (var-type var-link)
+                               (array-size var-link)
+                               :readonly? (readonly? var-link)
+                               :default-vals (default-val var-link))
+                  (link/+var   (tcl-name var-link)
+                               (var-type var-link)
+                               :readonly? (readonly? var-link)
+                               :default-val (default-val var-link))))))
+
+
+(defmethod print-object ((var-link <tcl-var-link>) stream)
+  (print-unreadable-object (var-link stream :type t :identity t)
+    (format stream
+            "ptr:~a  tcl-name:~a  array-size:~a  var-type:~a  readonly?:~a default-val:~a"
+            (ptr var-link) (tcl-name var-link) (array-size var-link)
+            (var-type var-link) (readonly? var-link) (default-val var-link))))
 
 
