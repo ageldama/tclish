@@ -20,6 +20,7 @@
                  (:file "error")
                  (:file "value-juggling")
                  (:file "interp")
+                 (:file "alias")
                  (:file "var")
                  (:file "do+chk")
                  (:file "eval")

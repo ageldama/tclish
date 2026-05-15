@@ -111,6 +111,12 @@
 
 
 
+(defun objv->tcl-obj-list (objc objv-ptr)
+  (iter (for i from 0 below objc)
+    (collect (cffi:mem-aref objv-ptr :pointer i))))
+
+
+
 (defun lisp-value-or-nullptr (val)
   (if val val (cffi:null-pointer)))
 

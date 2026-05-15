@@ -38,22 +38,3 @@
 
 (defun interp/hide-cmd (cmd-name hidden-cmd-name)
   (do+chk (tcl-hide-command) *tcl-interp* cmd-name hidden-cmd-name))
-
-
-
-
-#|
-
-       int
-       Tcl_CreateAlias(childInterp, childCmd, targetInterp, targetCmd,
-                       argc, argv)
-
-       int
-       Tcl_CreateAliasObj(childInterp, childCmd, targetInterp, targetCmd,
-                          objc, objv)
-
-       int
-       Tcl_GetAliasObj(interp, childCmd, targetInterpPtr, targetCmdPtr,
-                       objcPtr, objvPtr)
-
-|#

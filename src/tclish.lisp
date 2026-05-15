@@ -4,7 +4,12 @@
   (:export
 
    #:*tcl-interp*
-   #:with-interp #:interp/deleted? #:interp/active?
+
+   #:with-interp
+   #:interp/deleted? #:interp/active?
+   #:interp/safe? #:interp/parent #:interp/child
+   #:interp/create-child #:interp/interp-path
+   #:interp/expose-cmd #:interp/hide-cmd
 
    #:<tcl-error> #:error-message #:pack-tcl-error
    #:tcl-result-as-error
@@ -59,6 +64,8 @@
    #:tcl-obj-list->objv
    #:free-tcl-objv
 
+   #:objv->tcl-obj-list
+
    #:lisp-value-or-nullptr
    #:lisp-bool->c-int
    #:nullptr->nil
@@ -81,6 +88,8 @@
    #:eval-tcl/tcl-objv
 
    #:app-main
+
+   #:alias/get
    ))
 
 
