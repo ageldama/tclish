@@ -1,30 +1,32 @@
 (in-package :tclish)
 
 
+
+
 (defun link/update  (var-name)
   (tcl-update-linked-var *tcl-interp* var-name))
 
-(defun link/-unklink (var-name)
+(defun link/-unlink (var-name)
   (tcl-unlink-var *tcl-interp* var-name))
 
 
-
+
 
 (defun link/common-type? (type)
   (member type
-          '(+tcl-link-int+ +tcl-link-uint+ +tcl-link-char+ +tcl-link-uchar+
-            +tcl-link-short+ +tcl-link-ushort+ +tcl-link-long+ +tcl-link-ulong+
-            +tcl-link-wide-int+ +tcl-link-wide-uint+
-            +tcl-link-float+ +tcl-link-double+
-            +tcl-link-boolean+)))
+          (list +tcl-link-int+ +tcl-link-uint+ +tcl-link-char+ +tcl-link-uchar+
+                +tcl-link-short+ +tcl-link-ushort+ +tcl-link-long+ +tcl-link-ulong+
+                +tcl-link-wide-int+ +tcl-link-wide-uint+
+                +tcl-link-float+ +tcl-link-double+
+                +tcl-link-boolean+)))
 
 (defun link/var-type? (var-type)
   (or (link/common-type? var-type)
-      (member var-type '(+tcl-link-string+))))
+      (member var-type (list +tcl-link-string+))))
 
 (defun link/array-type? (arr-type)
   (or (link/common-type? arr-type)
-      (member arr-type '(+tcl-link-chars+ +tcl-link-binary+))))
+      (member arr-type (list +tcl-link-chars+ +tcl-link-binary+))))
 
 
 (defvar +link/common-cffi-type-plist+
@@ -58,6 +60,7 @@
 (defun link/array-cffi-type (array-type)
   (getf +link/array-cffi-type-plist+ array-type))
 
+
 
 (defun link/alloc-var (var-type &key default-val)
   (assert (link/var-type? var-type) (var-type))
@@ -100,6 +103,8 @@
   (cffi:foreign-free ptr))
 
 
+
+
 (defun link/+var (var-name var-type &key readonly? default-val)
   (assert (link/var-type? var-type) (var-type))
   (let ((var-ptr  (link/alloc-var var-type :default-val default-val))
@@ -126,6 +131,9 @@
     array-ptr))
 
 
+
+
+
 
 
 (defclass <tcl-var-link> ()
@@ -179,6 +187,7 @@
 
 
 (defmethod destroy ((var-link <tcl-var-link>))
+  (link/-unlink (tcl-name var-link))
   (if (array-size var-link)
       (link/free-array (ptr var-link)
                        (var-type var-link))
@@ -188,6 +197,11 @@
   (with-slots (ptr) var-link
     (setf ptr (cffi:null-pointer))))
 
+
+(defmethod linked-value ((var-link <tcl-var-link>) &key array-index)
+  ;; TODO
+  )
+  
 
 ;; TODO get/var
 ;; TODO get/array

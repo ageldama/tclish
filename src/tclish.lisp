@@ -98,7 +98,7 @@
    #:link/alloc-array #:link/free-array
    #:link/+var #:link/+array
 
-   #:<tcl-var-link> #:destroy
+   #:<tcl-var-link> #:destroy #:linked-value
    #:ptr #:tcl-name #:array-size #:var-type #:readonly? #:default-val
    ))
 
