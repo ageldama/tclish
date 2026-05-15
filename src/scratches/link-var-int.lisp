@@ -14,26 +14,24 @@
   (app-main ()
             (def-cmd/p)
 
-             (eval-tcl "set xxx 42")
-            ;; (eval-tcl "p [set xxx]")
+            (eval-tcl "set xxx 42")
 
-            (let ((xxx
-                    (link/+var "xxx" +tcl-link-int+
-                               ;:initial-element 18
-                               )))
+            (let ((xxx (make-instance '<tcl-var-link>
+                                      :var-type +tcl-link-uint+
+                                      :tcl-name "xxx")))
+              (unwind-protect
+                   (progn
+                     (eval-tcl "set xxx 18")
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx")
 
-              ;;(link/update "xxx")
+                     (eval-tcl "set xxx 28")
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx")
 
-              (eval-tcl "set xxx 18")
+                     (setf (linked-value xxx) 39)
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx"))
 
-              (format t "[~a]~%"
-                      (tclish:link/access-var
-                       xxx
-                       raw-cffi-tcl9:+tcl-link-int+))
-
-              (eval-tcl "p $xxx")
-
-              (link/free-var xxx +tcl-link-int+)
-
-
-            )))
+                ;; cleanup:
+                (destroy xxx)))))

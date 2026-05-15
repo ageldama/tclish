@@ -107,17 +107,41 @@
 
 
 
-(defun link/access-var (ptr var-type)
+(defun link/read-var (ptr var-type)
   (assert (link/var-type? var-type) (var-type))
   (let ((cffi-type  (link/var-cffi-type var-type)))
-    (case cffi-type
-      ('(:pointer :char) (link/access-var-str ptr))
-      (t                 (cffi:mem-ref ptr cffi-type)))))
+    (cond
+      ((equal cffi-type
+              '(:pointer :char))
+       (link/read-var-str ptr))
+      (t
+       (cffi:mem-ref ptr cffi-type)))))
 
 
-(defun link/access-var-str (ptr)
+(defun link/read-var-str (ptr)
   (cffi:foreign-string-to-lisp
    (cffi:make-pointer (cffi:mem-ref ptr :intptr))))
+
+
+(defun link/write-var (ptr var-type new-value)
+  (assert (link/var-type? var-type) (var-type))
+  (let ((cffi-type  (link/var-cffi-type var-type)))
+    (cond
+      ((equal cffi-type
+              '(:pointer :char))
+       (link/write-var-str ptr new-value))
+      (t
+       (setf (cffi:mem-ref ptr cffi-type) new-value)))))
+
+
+(defun link/write-var-str (ptr new-value)
+  ;; 현재값이 있다면 해제:
+  (let ((char* (cffi:mem-ref ptr :intptr)))
+    (unless (eq char* (cffi:pointer-address (cffi:null-pointer)))
+        (tcl-free (cffi:make-pointer char*))))
+  ;; 새로 할당해서 변경:
+  (setf (cffi:mem-ref ptr :intptr)
+        (cffi:pointer-address (str->tcl-alloced-charp new-value))))
 
 
 
@@ -177,25 +201,21 @@
 
 
 
-#|
+
 (defclass <tcl-var-link> ()
   ((ptr  :reader ptr
          :initform (cffi:null-pointer))
    (tcl-name   :reader tcl-name
                :initarg :tcl-name)
-   (array-size :reader array-size
-               :initarg :array-size
-               :initform nil)
    (var-type :initarg :var-type
              :reader var-type)
    (readonly? :initarg :readonly?
               :initform nil
               :reader readonly?)
-   (default-val :initarg :default-val
-                :initform nil
-                :reader default-val)
+   (initial-element :initarg :initial-element
+                    :initform nil
+                    :reader initial-element)
    ))
-
 
 
 (defmethod initialize-instance :before
@@ -204,51 +224,43 @@
   (assert (member :var-type args) (args)))
 
 
-
 (defmethod initialize-instance :after
     ((var-link <tcl-var-link>) &key)
   (with-slots (ptr) var-link
-    (setf ptr (if (array-size var-link)
-                  (link/+array (tcl-name var-link)
-                               (var-type var-link)
-                               (array-size var-link)
-                               :readonly? (readonly? var-link)
-                               :default-vals (default-val var-link))
-                  (link/+var   (tcl-name var-link)
-                               (var-type var-link)
-                               :readonly? (readonly? var-link)
-                               :default-val (default-val var-link))))))
+    (setf ptr (link/+var   (tcl-name var-link)
+                           (var-type var-link)
+                           :readonly? (readonly? var-link)
+                           :initial-element (initial-element var-link)))))
 
 
 (defmethod print-object ((var-link <tcl-var-link>) stream)
   (print-unreadable-object (var-link stream :type t :identity t)
     (format stream
-            "ptr:~a  tcl-name:~a  array-size:~a  var-type:~a  readonly?:~a default-val:~a"
-            (ptr var-link) (tcl-name var-link) (array-size var-link)
-            (var-type var-link) (readonly? var-link) (default-val var-link))))
+            "ptr:~a  tcl-name:~a  var-type:~a  readonly?:~a  initial-element:~a"
+            (ptr var-link) (tcl-name var-link)
+            (var-type var-link) (readonly? var-link)
+            (initial-element var-link))))
 
+(defmethod update ((var-link <tcl-var-link>))
+  (link/update (tcl-name var-link)))
 
 (defmethod destroy ((var-link <tcl-var-link>))
   (link/-unlink (tcl-name var-link))
-  (if (array-size var-link)
-      (link/free-array (ptr var-link)
-                       (var-type var-link))
-      (link/free-var   (ptr var-link)
-                       (var-type var-link)))
-  ;;
-  (with-slots (ptr) var-link
-    (setf ptr (cffi:null-pointer))))
+  (link/free-var (ptr var-link) (var-type var-link))
+  (with-slots (ptr) var-link (setf ptr nil)))
 
-#+nil
-(defmethod linked-value ((var-link <tcl-var-link>) &key array-index)
-  ;; TODO
-  )
-|#  
 
-;; TODO get/var
+
+(defmethod linked-value ((var-link <tcl-var-link>))
+  (link/read-var (ptr var-link) (var-type var-link)))
+
+(defmethod (setf linked-value) (new-value (var-link <tcl-var-link>))
+  (link/write-var (ptr var-link) (var-type var-link) new-value))
+
+
+
+
 ;; TODO get/array
-
-;; TODO setf/var
 ;; TODO setf/array
 
 

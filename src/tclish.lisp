@@ -95,13 +95,13 @@
 
    #:link/update #:link/-unlink
    #:link/alloc-var #:link/free-var
-   #:link/+var #:link/access-var
+   #:link/+var #:link/read-var #:link/write-var
 
    ;; #:link/+array
    ;; #:link/alloc-array #:link/free-array
-   ;; 
-   ;; #:<tcl-var-link> #:destroy #:linked-value
-   ;; #:ptr #:tcl-name #:array-size #:var-type #:readonly? #:default-val
+
+   #:<tcl-var-link> #:update #:destroy #:linked-value
+   #:ptr #:tcl-name #:var-type #:readonly? #:initial-element
    ))
 
 

@@ -14,23 +14,24 @@
   (app-main ()
             (def-cmd/p)
 
-            (eval-tcl "set xxx {foobar spameggs}")
-            ;;(eval-tcl "p [set xxx]")
+            (eval-tcl "set xxx {foobar}")
 
-            (let ((xxx
-                    (link/+var "xxx" +tcl-link-string+
-                               :initial-element "fooo"
-                               )))
+            (let ((xxx (make-instance '<tcl-var-link>
+                                      :var-type +tcl-link-string+
+                                      :tcl-name "xxx")))
+              (unwind-protect
+                   (progn
+                     (eval-tcl "set xxx {foo}")
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx")
 
-              ;;(link/update "xxx")
+                     (eval-tcl "set xxx {bar}")
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx")
 
-              (eval-tcl "set xxx {quux frob}")
-              (format t "[~a]~%"
-                      (link/access-var xxx +tcl-link-string+))
+                     (setf (linked-value xxx) "quux")
+                     (format t "[~a]~%" (linked-value xxx))
+                     (eval-tcl "p $xxx"))
 
-              (eval-tcl "p [set xxx]")
-
-              (link/free-var xxx +tcl-link-string+)
-
-
-            )))
+                ;; cleanup:
+                (destroy xxx)))))
