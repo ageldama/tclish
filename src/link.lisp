@@ -68,9 +68,11 @@
   (let ((cffi-type  (link/var-cffi-type var-type)))
     (case cffi-type
       ('(:pointer :char) (link/alloc-var-str default-val))
-      (t                 (cffi:foreign-alloc
-                          cffi-type
-                          :initial-contents default-val)))))
+      (t                 (let ((alloc-args (list cffi-type)))
+                           (when default-val
+                             (alexandria:nconcf alloc-args
+                                                (list :initial-element default-val)))
+                           (apply #'cffi:foreign-alloc alloc-args))))))
 
 (defun link/alloc-var-str (default-str)
   (if default-str
@@ -94,9 +96,12 @@
 (defun link/alloc-array (var-type size &key default-vals)
   (assert (link/array-type? var-type) (var-type))
   ;;
-  (let* ((cffi-type  (link/array-cffi-type var-type)))
-    (cffi:foreign-alloc cffi-type :count size
-                                  :initial-element default-vals)))
+  (let* ((cffi-type  (link/array-cffi-type var-type))
+         (alloc-args (list cffi-type :count size)))
+    ;; FIXME
+    (when default-vals (alexandria:nconcf alloc-args
+                                          (list :initial-element default-vals)))
+    (apply #'cffi:foreign-alloc alloc-args)))
 
 (defun link/free-array (ptr var-type)
   (declare (ignore var-type))
