@@ -20,22 +20,30 @@
             :objv          (objv->tcl-obj-list objc objv-ptr))))))
 
 
+(defun alias/str
+    (&key child-interp child-cmd tgt-interp tgt-cmd argv)
+  (assert child-interp  (child-interp))
+  (assert child-cmd     (child-cmd))
+  (assert tgt-interp    (tgt-interp))
+  (assert tgt-cmd       (tgt-cmd))
+  ;;
+  (do+chk (tcl-create-alias)
+          child-interp child-cmd
+          tgt-interp   tgt-cmd
+          (length argv) argv))
 
 
+(defun alias/obj
+    (&key child-interp child-cmd tgt-interp tgt-cmd tcl-obj-list-objv)
+  (assert child-interp  (child-interp))
+  (assert child-cmd     (child-cmd))
+  (assert tgt-interp    (tgt-interp))
+  (assert tgt-cmd       (tgt-cmd))
+  ;;
+  (multiple-value-bind (objv-ptr objc) (tcl-obj-list->objv tcl-obj-list-objv)
+    (do+chk (tcl-create-alias-obj)
+            child-interp child-cmd
+            tgt-interp tgt-cmd
+            objc objv-ptr)))
 
 
-
-
-
-#|
-
-       int
-       Tcl_CreateAlias(childInterp, childCmd, targetInterp, targetCmd,
-                       argc, argv)
-
-       int
-       Tcl_CreateAliasObj(childInterp, childCmd, targetInterp, targetCmd,
-                          objc, objv)
-
-
-|#

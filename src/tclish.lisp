@@ -89,7 +89,7 @@
 
    #:app-main
 
-   #:alias/get
+   #:alias/get #:alias/str #:alias/obj
    ))
 
 
