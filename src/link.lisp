@@ -178,3 +178,21 @@
             (var-type var-link) (readonly? var-link) (default-val var-link))))
 
 
+(defmethod destroy ((var-link <tcl-var-link>))
+  (if (array-size var-link)
+      (link/free-array (ptr var-link)
+                       (var-type var-link))
+      (link/free-var   (ptr var-link)
+                       (var-type var-link)))
+  ;;
+  (with-slots (ptr) var-link
+    (setf ptr (cffi:null-pointer))))
+
+
+;; TODO get/var
+;; TODO get/array
+
+;; TODO setf/var
+;; TODO setf/array
+
+

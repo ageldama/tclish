@@ -30,6 +30,7 @@
                  (:file "create-cmd")
                  (:file "ensemble")
                  (:file "evtq")
+                 (:file "link")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
                  (:file "app-main")

@@ -92,6 +92,14 @@
    #:app-main
 
    #:alias/get #:alias/str #:alias/obj
+
+   #:link/update #:link/-unlink
+   #:link/alloc-var #:link/free-var
+   #:link/alloc-array #:link/free-array
+   #:link/+var #:link/+array
+
+   #:<tcl-var-link> #:destroy
+   #:ptr #:tcl-name #:array-size #:var-type #:readonly? #:default-val
    ))
 
 
