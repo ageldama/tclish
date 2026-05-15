@@ -8,18 +8,18 @@
 
 
 (defun interp/deleted? ()
-  (not (zerop (tcl-interp-deleted *tcl-interp*))))
+  (<-tcl-int-bool (tcl-interp-deleted *tcl-interp*)))
 
 (defun interp/active? ()
-  (not (zerop (tcl-interp-active *tcl-interp*))))
+  (<-tcl-int-bool (tcl-interp-active *tcl-interp*)))
 
 (defun interp/safe? ()
-  (not (zerop (tcl-is-safe *tcl-interp*))))
+  (<-tcl-int-bool (tcl-is-safe *tcl-interp*)))
 
 (defun interp/child (child-name)
   (let ((child-interp (tcl-get-child *tcl-interp* child-name)))
     (if (cffi:null-pointer-p child-interp)
-        (pack-tcl-error :message (tcl-get-string-result *tcl-interp*))
+        (tcl-result-as-error)
         child-interp)))
 
 (defun interp/parent ()

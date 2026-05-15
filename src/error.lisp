@@ -14,3 +14,9 @@
      &allow-other-keys)
   (apply (if throw? #'error #'make-condition)
          condition args))
+
+
+(defun tcl-result-as-error
+    (&rest args)
+  (let ((err-msg (tcl-get-string-result *tcl-interp*)))
+    (apply #'pack-tcl-error :message err-msg args)))

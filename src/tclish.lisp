@@ -7,6 +7,7 @@
    #:with-interp #:interp/deleted? #:interp/active?
 
    #:<tcl-error> #:error-message #:pack-tcl-error
+   #:tcl-result-as-error
 
    #:*do+chk/error?* #:do+chk
    #:with-tcl-error/thrown #:with-tcl-error/result
@@ -61,6 +62,7 @@
    #:lisp-value-or-nullptr
    #:lisp-bool->c-int
    #:nullptr->nil
+   #:<-tcl-int-bool
 
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
    #:get-var #:set-var #:tcl-var #:unset-var

@@ -122,4 +122,8 @@
   (if (cffi:null-pointer-p cval) nil cval))
 
 
+(defun <-tcl-int-bool (int-val)
+  (not (zerop int-val)))
+
+
 
