@@ -7,7 +7,7 @@
     ((&key
         (do+chk/error? t)
 
-        tcl-create-interp '(tcl-create-interp)
+        (tcl-create-interp '(tcl-create-interp))
 
         tcl-init-subsystems?
         tk-init?
