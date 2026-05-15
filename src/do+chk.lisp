@@ -29,3 +29,8 @@
                (format *error-output* "~a~%" ,%err-msg)))))))
 
 
+(defmacro with-tcl-error/thrown (&rest body)
+  `(let ((*do+chk/error?* t)) ,@body))
+
+(defmacro with-tcl-error/result (&rest body)
+  `(let ((*do+chk/error?* nil)) ,@body))
