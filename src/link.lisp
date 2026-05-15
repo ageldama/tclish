@@ -10,33 +10,53 @@
 
 
 
-(defun link/var-type? (var-type)
-  (member var-type
+(defun link/common-type? (type)
+  (member type
           '(+tcl-link-int+ +tcl-link-uint+ +tcl-link-char+ +tcl-link-uchar+
             +tcl-link-short+ +tcl-link-ushort+ +tcl-link-long+ +tcl-link-ulong+
             +tcl-link-wide-int+ +tcl-link-wide-uint+
             +tcl-link-float+ +tcl-link-double+
-            +tcl-link-boolean+ +tcl-link-string+)))
+            +tcl-link-boolean+)))
+
+(defun link/var-type? (var-type)
+  (or (link/common-type? var-type)
+      (member var-type '(+tcl-link-string+))))
+
+(defun link/array-type? (arr-type)
+  (or (link/common-type? arr-type)
+      (member arr-type '(+tcl-link-chars+ +tcl-link-binary+))))
+
+
+(defvar +link/common-cffi-type-plist+
+  (list +tcl-link-int+       :int
+        +tcl-link-uint+      :uint
+        +tcl-link-char+      :char
+        +tcl-link-uchar+     :uchar
+        +tcl-link-short+     :short
+        +tcl-link-ushort+    :ushort
+        +tcl-link-long+      :long
+        +tcl-link-ulong+     :ulong
+        +tcl-link-wide-int+  :tcl-wide-int
+        +tcl-link-wide-uint+ :tcl-wide-uint
+        +tcl-link-float+     :float
+        +tcl-link-double+    :double
+        +tcl-link-boolean+   :boolean))
+
+(defvar +link/var-cffi-type-plist+
+  (append +link/common-cffi-type-plist+
+          (list +tcl-link-string+    '(:pointer :char))))
+
+(defvar +link/array-cffi-type-plist+
+  (append +link/common-cffi-type-plist+
+          (list +tcl-link-binary+    :pointer
+                +tcl-link-chars+     :pointer)))
 
 
 (defun link/var-cffi-type (var-type)
-  (let ((tcl-type->cffi-type-plist
-          (list +tcl-link-int+       :int
-                +tcl-link-uint+      :uint
-                +tcl-link-char+      :char
-                +tcl-link-uchar+     :uchar
-                +tcl-link-short+     :short
-                +tcl-link-ushort+    :ushort
-                +tcl-link-long+      :long
-                +tcl-link-ulong+     :ulong
-                +tcl-link-wide-int+  :tcl-wide-int
-                +tcl-link-wide-uint+ :tcl-wide-uint
-                +tcl-link-float+     :float
-                +tcl-link-double+    :double
-                +tcl-link-boolean+   :boolean
-                +tcl-link-string+    '(:pointer :char)
-                )))
-    (getf tcl-type->cffi-type-plist var-type)))
+  (getf +link/var-cffi-type-plist+ var-type))
+
+(defun link/array-cffi-type (array-type)
+  (getf +link/array-cffi-type-plist+ array-type))
 
 
 (defun link/alloc-var (var-type &key default-val)
@@ -48,8 +68,6 @@
       (t                 (cffi:foreign-alloc
                           cffi-type
                           :initial-contents default-val)))))
-
-
 
 (defun link/alloc-var-str (default-str)
   (if default-str
@@ -71,8 +89,21 @@
 
 
 
-#+nil
-(defun link/+var (var-name var-type &key readonly?)
+(defun link/+var (var-name var-type &key readonly? default-val)
+  (assert (link/var-type? var-type) (var-type))
+  (let ((var-ptr  (link/alloc-var var-type :default-val default-val))
+        (flags    (if readonly?
+                      (logior +tcl-link-read-only+ var-type)
+                      var-type)))
+    ;;
+    (do+chk (tcl-link-var) *tcl-interp* var-name var-ptr flags)
+    var-ptr))
 
-  (do+chk (tcl-link-var) *tcl-interp* var-name ptr var-type)
-)
+
+
+
+
+;; TODO link/+array
+
+
+
