@@ -48,8 +48,8 @@
 
 (defvar +link/array-cffi-type-plist+
   (append +link/common-cffi-type-plist+
-          (list +tcl-link-binary+    :pointer
-                +tcl-link-chars+     :pointer)))
+          (list +tcl-link-binary+    :uchar
+                +tcl-link-chars+     :char)))
 
 
 (defun link/var-cffi-type (var-type)
@@ -88,6 +88,17 @@
     (tcl-free ptr)))
 
 
+(defun link/alloc-array (var-type size &key default-vals)
+  (assert (link/array-type? var-type) (var-type))
+  ;;
+  (let* ((cffi-type  (link/array-cffi-type var-type)))
+    (cffi:foreign-alloc cffi-type :count size
+                                  :initial-element default-vals)))
+
+(defun link/free-array (ptr var-type)
+  (declare (ignore var-type))
+  (cffi:foreign-free ptr))
+
 
 (defun link/+var (var-name var-type &key readonly? default-val)
   (assert (link/var-type? var-type) (var-type))
@@ -100,10 +111,24 @@
     var-ptr))
 
 
+(defun link/+array (array-name var-type size &key readonly? default-vals)
+  (assert (link/array-type? var-type) (var-type))
+  (assert (> size 0) (size))
+  ;;
+  (let ((array-ptr  (link/alloc-array var-type size
+                                      :default-vals default-vals))
+        (flags      (if readonly?
+                        (logior +tcl-link-read-only+ var-type)
+                        var-type)))
+    ;;
+    (do+chk (tcl-link-array)
+            *tcl-interp* array-name array-ptr flags size)
+    array-ptr))
 
 
 
-;; TODO link/+array
+
+
 
 
 
