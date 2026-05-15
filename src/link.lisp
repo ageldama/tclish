@@ -97,6 +97,10 @@
 (defun link/free-var-str (ptr)
   (when (and (not (null ptr))
              (not (cffi:null-pointer-p ptr)))
+    (let ((addr (cffi:mem-ref ptr :intptr)))
+      (unless (eq addr (cffi:pointer-address (cffi:null-pointer)))
+        (tcl-free (cffi:make-pointer addr))))
+    ;; 맨 마지막에 자기자신(포인터변수)도 해제.
     (tcl-free ptr)))
 
 
