@@ -70,27 +70,22 @@
       ((equal cffi-type
               '(:pointer :char))
        (link/alloc-var-str initial-element))
-      (t                 (let ((alloc-args (list cffi-type)))
-                           (when initial-element
-                             (alexandria:nconcf alloc-args
-                                                (list :initial-element
-                                                      initial-element)))
-                           (apply #'cffi:foreign-alloc alloc-args))))))
+      (t (let ((alloc-args (list cffi-type)))
+           (when initial-element
+             (alexandria:nconcf alloc-args
+                                (list :initial-element
+                                      initial-element)))
+           (apply #'cffi:foreign-alloc alloc-args))))))
 
 
 (defun link/alloc-var-str (initial-element)
-  (if initial-element
-      (str->tcl-alloced-charp initial-element)
-      ;; else:
-
-      #+nil
-      (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
-        (setf (cffi:mem-ref ptr :intptr)
-              (cffi:pointer-address (cffi:null-pointer)))
-        ptr)
-
-      (cffi:null-pointer)
-      ))
+  (let ((char* (cffi:pointer-address
+                (if initial-element
+                    (str->tcl-alloced-charp initial-element)
+                    (cffi:null-pointer)))))
+    (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
+      (setf (cffi:mem-ref ptr :intptr) char*)
+      ptr)))
 
 
 (defun link/free-var (ptr var-type)
@@ -108,6 +103,28 @@
         (tcl-free (cffi:make-pointer addr))))
     ;; 맨 마지막에 자기자신(포인터변수)도 해제.
     (tcl-free ptr)))
+
+
+
+
+(defun link/access-var (ptr var-type)
+  (assert (link/var-type? var-type) (var-type))
+  (let ((cffi-type  (link/var-cffi-type var-type)))
+    (case cffi-type
+      ('(:pointer :char) (link/access-var-str ptr))
+      (t                 (cffi:mem-ref ptr cffi-type)))))
+
+
+(defun link/access-var-str (ptr)
+  (cffi:foreign-string-to-lisp
+   (cffi:make-pointer (cffi:mem-ref ptr :intptr))))
+
+
+
+
+
+
+
 
 
 (defun link/alloc-array (var-type size &key default-vals)

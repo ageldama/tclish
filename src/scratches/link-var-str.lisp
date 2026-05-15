@@ -14,19 +14,21 @@
   (app-main ()
             (def-cmd/p)
 
-            ;; (eval-tcl "set xxx {foobar spameggs}")
-            ;; (eval-tcl "p [set xxx]")
+            (eval-tcl "set xxx {foobar spameggs}")
+            ;;(eval-tcl "p [set xxx]")
 
             (let ((xxx
                     (link/+var "xxx" +tcl-link-string+
-                               ;;:initial-element ""
+                               :initial-element "fooo"
                                )))
 
               ;;(link/update "xxx")
 
-              ;;(format t "[~a]~%" (cffi:foreign-string-to-lisp xxx))
+              (eval-tcl "set xxx {quux frob}")
+              (format t "[~a]~%"
+                      (link/access-var xxx +tcl-link-string+))
 
-              ;;(eval-tcl "p [set xxx]")
+              (eval-tcl "p [set xxx]")
 
               (link/free-var xxx +tcl-link-string+)
 
