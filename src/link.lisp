@@ -62,29 +62,35 @@
 
 
 
-(defun link/alloc-var (var-type &key default-val)
+(defun link/alloc-var (var-type &key initial-element)
   (assert (link/var-type? var-type) (var-type))
   ;;
   (let ((cffi-type  (link/var-cffi-type var-type)))
     (cond
       ((equal cffi-type
               '(:pointer :char))
-       (link/alloc-var-str default-val))
+       (link/alloc-var-str initial-element))
       (t                 (let ((alloc-args (list cffi-type)))
-                           (when default-val
+                           (when initial-element
                              (alexandria:nconcf alloc-args
-                                                (list :initial-element default-val)))
+                                                (list :initial-element
+                                                      initial-element)))
                            (apply #'cffi:foreign-alloc alloc-args))))))
 
 
-(defun link/alloc-var-str (default-str)
-  (if default-str
-      (str->tcl-alloced-charp default-str)
+(defun link/alloc-var-str (initial-element)
+  (if initial-element
+      (str->tcl-alloced-charp initial-element)
       ;; else:
+
+      #+nil
       (let ((ptr (tcl-alloc (cffi:foreign-type-size :pointer))))
         (setf (cffi:mem-ref ptr :intptr)
               (cffi:pointer-address (cffi:null-pointer)))
-        ptr)))
+        ptr)
+
+      (cffi:null-pointer)
+      ))
 
 
 (defun link/free-var (ptr var-type)
@@ -111,19 +117,20 @@
          (alloc-args (list cffi-type :count size)))
     ;; FIXME
     (when default-vals (alexandria:nconcf alloc-args
-                                          (list :initial-element default-vals)))
+                                          (list :initial-contents default-vals)))
     (apply #'cffi:foreign-alloc alloc-args)))
 
 (defun link/free-array (ptr var-type)
-  (declare (ignore var-type))
-  (cffi:foreign-free ptr))
+  (declare (ignore ptr var-type)))
+
+
 
 
 
 
-(defun link/+var (var-name var-type &key readonly? default-val)
+(defun link/+var (var-name var-type &key readonly? initial-element)
   (assert (link/var-type? var-type) (var-type))
-  (let ((var-ptr  (link/alloc-var var-type :default-val default-val))
+  (let ((var-ptr  (link/alloc-var var-type :initial-element initial-element))
         (flags    (if readonly?
                       (logior +tcl-link-read-only+ var-type)
                       var-type)))
@@ -132,6 +139,8 @@
     var-ptr))
 
 
+;; FIXME
+#+nil
 (defun link/+array (array-name var-type size &key readonly? default-vals)
   (assert (link/array-type? var-type) (var-type))
   (assert (> size 0) (size))
@@ -151,7 +160,7 @@
 
 
 
-
+#|
 (defclass <tcl-var-link> ()
   ((ptr  :reader ptr
          :initform (cffi:null-pointer))
@@ -213,11 +222,11 @@
   (with-slots (ptr) var-link
     (setf ptr (cffi:null-pointer))))
 
-
+#+nil
 (defmethod linked-value ((var-link <tcl-var-link>) &key array-index)
   ;; TODO
   )
-  
+|#  
 
 ;; TODO get/var
 ;; TODO get/array
