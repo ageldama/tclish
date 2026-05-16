@@ -117,6 +117,10 @@
    #:trace-var/+trace #:trace-var/-untrace #:trace-var/list-all
    #:<tcl-var-trace> #:var-name #:array-subs #:flags #:cb-closure
    #:client-data #:untrace-var
+
+   #:trace-cmd/+trace #:trace-cmd/-untrace #:trace-cmd/list-all
+   #:<tcl-cmd-trace> #:cmd-name #:flags #:cb-closure #:client-data
+   #:untrace-cmd
    ))
 
 

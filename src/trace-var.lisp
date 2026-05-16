@@ -108,7 +108,7 @@
 (defmethod print-object ((var-trace <tcl-var-trace>) stream)
   (print-unreadable-object (var-trace stream :type t :identity t)
     (format stream
-            "var-name:~a  array-subs:~a  flags:~a  cb-closure:~a  client-data:~a"
+            "var-name:~a  array-subs:~a  flags:~b  cb-closure:~a  client-data:~a"
             (var-name var-trace)
             (array-subs var-trace)
             (flags var-trace)

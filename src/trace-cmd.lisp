@@ -23,6 +23,7 @@
                                     :flags       flags)
     ;;
     (when (flags-bit? +tcl-trace-destroyed+ flags)
+      ;; (format t "DESTROYED: ~a" client-data)
       (trace-cmd/unregist-cb client-data))))
 
 
@@ -39,7 +40,7 @@
             *tcl-interp*
             cmd-name
             flags*
-            (cffi:callback %trace-var-proc-cb-cfunc)
+            (cffi:callback %trace-cmd-proc-cb-cfunc)
             client-data)
     client-data))
 
@@ -47,9 +48,10 @@
                            client-data
                            &key (flags 0))
   (let ((flags*       (trace-cmd/enforce-flags flags)))
+    ;;(format t "untrace: ~a / ~a / ~a ~%" cmd-name client-data flags)
     (tcl-untrace-command *tcl-interp* cmd-name
                          flags*
-                         (cffi:callback %trace-var-proc-cb-cfunc)
+                         (cffi:callback %trace-cmd-proc-cb-cfunc)
                          client-data)))
 
 (defun trace-cmd/list-all (cmd-name)
@@ -69,3 +71,45 @@
     (setf prev-client-data client-data)))
 
 
+
+(defclass <tcl-cmd-trace> ()
+  ((cmd-name :reader cmd-name
+             :initarg :cmd-name)
+   (flags      :reader flags
+               :initarg :flags
+               :initform 0)
+   (cb-closure    :reader cb-closure
+                  :initarg :cb-closure)
+   (client-data :reader client-data
+                :initform nil)))
+
+(defmethod print-object ((cmd-trace <tcl-cmd-trace>) stream)
+  (print-unreadable-object (cmd-trace stream :type t :identity t)
+    (format stream
+            "cmd-name:~a  flags:~b  cb-closure:~a  client-data:~a"
+            (cmd-name cmd-trace)
+            (flags cmd-trace)
+            (cb-closure cmd-trace)
+            (client-data cmd-trace))))
+
+(defmethod initialize-instance :before
+    ((cmd-trace <tcl-cmd-trace>) &rest args)
+  (assert (member :cmd-name args) (args))
+  (assert (member :cb-closure args) (args))
+  (assert (not (member :client-data args)) (args)))
+
+(defmethod initialize-instance :after
+    ((cmd-trace <tcl-cmd-trace>) &key)
+  (with-slots (client-data) cmd-trace
+    (setf client-data
+          (trace-cmd/+trace (cmd-name cmd-trace)
+                            (cb-closure cmd-trace)
+                            :flags (flags cmd-trace)))))
+
+(defmethod untrace-cmd ((cmd-trace <tcl-cmd-trace>))
+  (trace-cmd/-untrace
+   (cmd-name cmd-trace)
+   (client-data cmd-trace)
+   :flags (flags cmd-trace)))
+
+
