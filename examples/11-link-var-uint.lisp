@@ -1,13 +1,8 @@
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cffi)
-  (ql:quickload :tclish))
+(defpackage #:tclish/examples/11-link-var-uint
+  (:use #:cl #:raw-cffi-tcl9 #:tclish)
+  (:export #:main))
 
-(defpackage #:scratch-link-var-int
-  (:use #:cl #:tclish #:raw-cffi-tcl9)
-  (:export :main))
-
-
-(in-package :scratch-link-var-int)
+(in-package :tclish/examples/11-link-var-uint)
 
 
 (defun main ()
@@ -23,7 +18,7 @@
               (unwind-protect
                    (progn
                      (eval-tcl "p $xxx")
-                     
+
                      (eval-tcl "set xxx 18")
                      (format t "[~a]~%" (linked-value xxx))
                      (eval-tcl "p $xxx")

@@ -1,9 +1,11 @@
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :tclish)
-  )
+(defpackage  #:tclish/examples/13-link-array-uint
+  (:use #:cl #:tclish #:raw-cffi-tcl9)
+  (:export :main))
+
+(in-package :tclish/examples/13-link-array-uint)
 
 
-(defun mmm-uint-array ()
+(defun main ()
   (tclish:app-main
       ()
 
@@ -23,7 +25,7 @@
                (tclish:eval-tcl "lset xarr end 4294967295")
                (tclish:eval-tcl "p {LSET(END) } $xarr")
 
-               (format t "arr(end): ~a~%" 
+               (format t "arr(end): ~a~%"
                        (tclish:linked-value-at arr (1- (length arr-init))))
 
                (setf (tclish:linked-value-at arr 0)

@@ -1,14 +1,8 @@
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :cffi)
-  (ql:quickload :tclish))
-
-(defpackage #:scratch-link-var-str
+(defpackage  #:tclish/examples/12-link-var-string
   (:use #:cl #:tclish #:raw-cffi-tcl9)
   (:export :main))
 
-
-(in-package :scratch-link-var-str)
-
+(in-package :tclish/examples/12-link-var-string)
 
 (defun main ()
   (app-main ()
