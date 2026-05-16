@@ -11,7 +11,10 @@
   ;;
   (let* ((counter (call-when-deleted/counter-cffi client-data))
          (cb (call-when-deleted/cb counter)))
-    (if cb (funcall cb counter interp)
+    (if cb (funcall cb
+                    :counter counter
+                    :client-data client-data
+                    :interp interp)
         (error "Callback not found (CALL-WHEN-DELETED/Nr:~a)"
                counter))))
 
@@ -29,7 +32,7 @@
    (values counter counter-cffi)))
 
 
-(defun call-when-deleted/+del (counter client-data)
+(defun call-when-deleted/-del (counter client-data)
   (declare (ignore counter))
   (tcl-dont-call-when-deleted *tcl-interp*
                               (cffi:callback %call-when-deleted-cb-cfunc)
