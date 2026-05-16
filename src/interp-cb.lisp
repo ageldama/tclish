@@ -2,6 +2,7 @@
 
 (def-tcl-callback-pattern
     :cb-prefix "call-when-deleted"
+  :one-off? t
   :counter-cffi-type :uint16)
 
 

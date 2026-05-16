@@ -147,6 +147,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
    1. [Link String Variable](./examples/12-link-var-string.lisp)
    1. [Link Fixed-Size Array](./examples/13-link-array-uint.lisp)
 
+1. [Interpreter Cleanup Callback](./examples/14-call-when-deleted.lisp)
 
 ## Dependencies
 

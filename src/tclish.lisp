@@ -111,7 +111,6 @@
    #:<tcl-array-link> #:initial-contents #:size #:destroy #:linked-value-at
 
    #:call-when-deleted/+add #:call-when-deleted/-del
-   #:call-when-deleted/free-counter-cffi
    ))
 
 

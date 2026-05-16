@@ -9,9 +9,8 @@
   (tclish:app-main
       ()
 
-      (call-when-deleted/+add (lambda (&rest args &key client-data &allow-other-keys)
+      (call-when-deleted/+add (lambda (&rest args)
                                 (declare (ignore args))
-                                (call-when-deleted/free-counter-cffi client-data)
                                 (format t "BYEBYE!~%")))
 
 

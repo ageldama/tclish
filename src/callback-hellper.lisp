@@ -2,11 +2,10 @@
 
 
 
-;; TODO one-off?
-
 (defmacro def-tcl-callback-pattern
     (&key
        cb-prefix
+       one-off?
        (counter-cffi-type :uint64)
        (closure-map-initform '(make-hash-table)))
 
@@ -104,7 +103,9 @@
                      "Callback closure not registered? (~a / ~a)"
                      ,cb-prefix counter)
              ;;
-             (apply cb args)))
+             (unwind-protect (apply cb args)
+               (when ,one-off?
+                   (,unregist-fname client-data)))))
 
 
          ))))
