@@ -149,6 +149,9 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 1. [Interpreter Cleanup Callback](./examples/14-call-when-deleted.lisp)
 
+1. [Tracing Tcl Variables at Lisp](./examples/15-trace-var.lisp)
+
+
 ## Dependencies
 
 * [raw-cffi-tcl9](https://github.com/ageldama/raw-cffi-tcl9)

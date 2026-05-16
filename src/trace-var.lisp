@@ -89,4 +89,53 @@
     (setf prev-client-data client-data)))
 
 
+
+
+(defclass <tcl-var-trace> ()
+  ((var-name :reader var-name
+             :initarg :var-name)
+   (array-subs :reader array-subs
+               :initarg :array-subs
+               :initform nil)
+   (flags      :reader flags
+               :initarg :flags
+               :initform 0)
+   (cb-closure    :reader cb-closure
+                  :initarg :cb-closure)
+   (client-data :reader client-data
+                :initform nil)))
+
+(defmethod print-object ((var-trace <tcl-var-trace>) stream)
+  (print-unreadable-object (var-trace stream :type t :identity t)
+    (format stream
+            "var-name:~a  array-subs:~a  flags:~a  cb-closure:~a  client-data:~a"
+            (var-name var-trace)
+            (array-subs var-trace)
+            (flags var-trace)
+            (cb-closure var-trace)
+            (client-data var-trace))))
+
+(defmethod initialize-instance :before
+    ((var-trace <tcl-var-trace>) &rest args)
+  (assert (member :var-name args) (args))
+  (assert (member :cb-closure args) (args))
+  (assert (not (member :client-data args)) (args)))
+
+(defmethod initialize-instance :after
+    ((var-trace <tcl-var-trace>) &key)
+  (with-slots (client-data) var-trace
+    (setf client-data
+          (trace-var/+trace (var-name var-trace)
+                            (cb-closure var-trace)
+                            :array-subs (array-subs var-trace)
+                            :flags (flags var-trace)))))
+
+(defmethod untrace-var ((var-trace <tcl-var-trace>))
+  (trace-var/-untrace
+   (var-name var-trace)
+   (client-data var-trace)
+   :flags (flags var-trace)))
+
+
+
 
