@@ -5,6 +5,8 @@
 
    #:*tcl-interp*
 
+   #:def-tcl-callback-pattern
+
    #:with-interp
    #:interp/deleted? #:interp/active?
    #:interp/safe? #:interp/parent #:interp/child
@@ -108,6 +110,7 @@
 
    #:<tcl-array-link> #:initial-contents #:size #:destroy #:linked-value-at
 
+   #:call-when-deleted/+add #:call-when-deleted/-del
    ))
 
 
