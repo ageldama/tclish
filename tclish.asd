@@ -21,6 +21,7 @@
                  (:file "error")
                  (:file "value-juggling")
                  (:file "interp")
+                 (:file "interp-cb")
                  (:file "alias")
                  (:file "var")
                  (:file "do+chk")

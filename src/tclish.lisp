@@ -5,6 +5,8 @@
 
    #:*tcl-interp*
 
+   #:def-tcl-callback-pattern
+
    #:with-interp
    #:interp/deleted? #:interp/active?
    #:interp/safe? #:interp/parent #:interp/child

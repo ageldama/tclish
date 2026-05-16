@@ -16,8 +16,10 @@
           (lock-defvar         (fmt->sym "*~a-cb-lock*"    cb-prefix))
           (lock-name           (format nil "*~a-cb-lock*"  cb-prefix))
 
-          (alloc-counter-cffi-fname (fmt->sym "~a/alloc-counter-cffi"))
-          (free-counter-cffi-fname  (fmt->sym "~a/free-counter-cffi"))
+          (alloc-counter-cffi-fname (fmt->sym "~a/alloc-counter-cffi"
+                                              cb-prefix))
+          (free-counter-cffi-fname  (fmt->sym "~a/free-counter-cffi"
+                                              cb-prefix))
 
           (counter-cffi-fname  (fmt->sym "~a/counter-cffi" cb-prefix))
 
