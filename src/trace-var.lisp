@@ -36,6 +36,9 @@
           err-msg-obj-ptr)))))
 
 
+(defun trace-var/enforce-flags (flags)
+  (logior flags +tcl-trace-result-object+))
+
 
 (defun trace-var/+trace (var-name
                          closure
@@ -43,7 +46,7 @@
                            array-subs)
   (let* ((registration (trace-var/regist-cb closure))
          (client-data  (getf registration :client-data))
-         (flags*       (logior flags +tcl-trace-result-object+)))
+         (flags*       (trace-var/enforce-flags flags)))
     (do+chk (tcl-trace-var2)
             *tcl-interp* var-name array-subs flags*
             (cffi:callback %trace-var-proc-cb-cfunc)
@@ -55,7 +58,7 @@
                            client-data
                            &key flags
                              array-subs)
-  (let ((flags*       (logior flags +tcl-trace-result-object+)))
+  (let ((flags*       (trace-var/enforce-flags flags)))
     (tcl-untrace-var2 *tcl-interp* var-name array-subs flags*
                       (cffi:callback %trace-var-proc-cb-cfunc)
                       client-data)))
