@@ -23,6 +23,7 @@
                  (:file "14-call-when-deleted")
                  (:file "15-trace-var")
                  (:file "16-trace-cmd")
+                 (:file "17-interp-trace")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"

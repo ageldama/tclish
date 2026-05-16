@@ -15,6 +15,7 @@
 
    #:<tcl-error> #:error-message #:pack-tcl-error
    #:tcl-result-as-error
+   #:set-tcl-result-string #:set-tcl-result-from-error
 
    #:*do+chk/error?* #:do+chk
    #:with-tcl-error/thrown #:with-tcl-error/result
@@ -121,6 +122,12 @@
    #:trace-cmd/+trace #:trace-cmd/-untrace #:trace-cmd/list-all
    #:<tcl-cmd-trace> #:cmd-name #:flags #:cb-closure #:client-data
    #:untrace-cmd
+
+   #:+tcl-trace-level-any+
+   #:+tcl-trace-level-only-top+
+   #:+tcl-trace-level-only-top-and-one-more+
+   #:interp-trace/+trace #:interp-trace/-delete
+
    ))
 
 

@@ -35,6 +35,7 @@
                  (:file "link")
                  (:file "trace-var")
                  (:file "trace-cmd")
+                 (:file "interp-trace")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
                  (:file "app-main")
