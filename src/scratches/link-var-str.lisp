@@ -19,6 +19,7 @@
             (let ((xxx (make-instance '<tcl-var-link>
                                       :var-type +tcl-link-string+
                                       :tcl-name "xxx")))
+              (format t "VAR-LINK: ~a~%" xxx)
               (unwind-protect
                    (progn
                      (eval-tcl "set xxx {foo}")

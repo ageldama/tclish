@@ -165,6 +165,9 @@
   (declare (ignore ptr var-type)))
 
 
+;; TODO link/read-array
+;; TODO link/write-array
+
 
 
 
