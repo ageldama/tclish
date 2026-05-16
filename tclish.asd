@@ -17,6 +17,7 @@
                 :components
                 ((:file "tclish-cffi")
                  (:file "tclish")
+                 (:file "callback-hellper")
                  (:file "error")
                  (:file "value-juggling")
                  (:file "interp")
