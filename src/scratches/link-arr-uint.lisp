@@ -10,35 +10,36 @@
       (tclish:def-cmd/p)
 
       (let* ((arr-len 10)
-             (arr (cffi:make-shareable-byte-vector
-                   (* arr-len (cffi:foreign-type-size :uint)))))
+             (arr (cffi:foreign-alloc :uint
+                                      :count arr-len
+                                      :initial-contents
+                                      #(1 2 3 4 5 6 7 8 9 10))))
+        (unwind-protect
 
-        (cffi:with-pointer-to-vector-data (arr-ptr arr)
+             (progn
+               (tclish:do+chk (raw-cffi-tcl9:tcl-link-array)
+                              tclish:*tcl-interp*
+                              "xarr" arr
+                              raw-cffi-tcl9:+tcl-link-uint+
+                              arr-len)
 
-          ;;(format t "arr: ~a / ~a~%" arr arr-ptr)
+               (tclish:eval-tcl "p {CLEAN: } $xarr")
+               (tclish:eval-tcl "lset xarr end 4294967295")
+               (tclish:eval-tcl "p {LSET(END) } $xarr")
 
-          (tclish:do+chk (raw-cffi-tcl9:tcl-link-array)
-                         tclish:*tcl-interp*
-                         "xarr" arr-ptr
-                         raw-cffi-tcl9:+tcl-link-uint+
-                         arr-len)
+               ;;(format t "arr: ~a~%" arr)
 
-          (tclish:eval-tcl "p {CLEAN: } $xarr")
-          (tclish:eval-tcl "lset xarr end 4294967295")
-          (tclish:eval-tcl "p {LSET(END) } $xarr")
+               (format t "arr(end): ~a~%" 
+                       (cffi:mem-aref arr :uint (1- arr-len)))
 
-          (format t "arr: ~a~%" arr)
+               (setf (cffi:mem-aref arr :uint 0)
+                     (1- (cffi:mem-aref arr :uint (1- arr-len))))
 
-          (format t "arr(end): ~a~%" 
-                  (cffi:mem-aref arr-ptr :uint (1- arr-len)))
+               (tclish:eval-tcl "p {: } $xarr")
 
-          (setf (cffi:mem-aref arr-ptr :uint 0)
-                (1- (cffi:mem-aref arr-ptr :uint (1- arr-len))))
+               (raw-cffi-tcl9:tcl-unlink-var tclish:*tcl-interp* "xarr"))
 
-          (format t "arr: ~a~%" arr)
-          (tclish:eval-tcl "p {: } $xarr")
-
-          (raw-cffi-tcl9:tcl-unlink-var tclish:*tcl-interp* "xarr")
+          (cffi:foreign-free arr)
 
           ))
       ))

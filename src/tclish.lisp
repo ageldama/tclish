@@ -97,8 +97,9 @@
    #:link/alloc-var #:link/free-var
    #:link/+var #:link/read-var #:link/write-var
 
-   ;; #:link/+array
-   ;; #:link/alloc-array #:link/free-array
+   #:link/+array
+   #:link/alloc-array #:link/free-array
+   #:link/read-array #:link/write-array
 
    #:<tcl-var-link> #:update #:destroy #:linked-value
    #:ptr #:tcl-name #:var-type #:readonly? #:initial-element

@@ -18,10 +18,14 @@
 
             (let ((xxx (make-instance '<tcl-var-link>
                                       :var-type +tcl-link-string+
-                                      :tcl-name "xxx")))
+                                      :tcl-name "xxx"
+                                      :initial-element "HOWDY?!"
+                                      )))
               (format t "VAR-LINK: ~a~%" xxx)
               (unwind-protect
                    (progn
+                     (eval-tcl "p $xxx")
+
                      (eval-tcl "set xxx {foo}")
                      (format t "[~a]~%" (linked-value xxx))
                      (eval-tcl "p $xxx")
@@ -35,4 +39,5 @@
                      (eval-tcl "p $xxx"))
 
                 ;; cleanup:
-                (destroy xxx)))))
+                (destroy xxx)
+                ))))
