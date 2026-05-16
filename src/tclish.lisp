@@ -111,6 +111,10 @@
    #:<tcl-array-link> #:initial-contents #:size #:destroy #:linked-value-at
 
    #:call-when-deleted/+add #:call-when-deleted/-del
+
+   #:->flags-bits #:->flags-bits* #:<-flags-bits #:flags-bit?
+
+   #:trace-var/+trace #:trace-var/-untrace
    ))
 
 

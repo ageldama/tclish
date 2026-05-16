@@ -33,6 +33,7 @@
                  (:file "ensemble")
                  (:file "evtq")
                  (:file "link")
+                 (:file "trace-var")
                  (:file "misc")
                  (:file "tclish-redir-to-outstream-chan")
                  (:file "app-main")
