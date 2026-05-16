@@ -21,6 +21,7 @@
                  (:file "12-link-var-string")
                  (:file "13-link-array-uint")
                  (:file "14-call-when-deleted")
+                 (:file "15-trace-var")
                  ))
                )
   :description "Examples of Much more Lispy(tm) Tcl/Tk 9.0"

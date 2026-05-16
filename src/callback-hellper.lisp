@@ -7,7 +7,8 @@
        cb-prefix
        one-off?
        (counter-cffi-type :uint64)
-       (closure-map-initform '(make-hash-table)))
+       (closure-map-initform '(make-hash-table))
+       (lock-timeout 1))
 
   (flet  ((fmt->sym (fmt-str &rest args)
             (read-from-string (apply #'format `(nil ,fmt-str ,@args)))))
@@ -46,7 +47,7 @@
          (defvar ,closure-map-defvar ,closure-map-initform)
 
          ;;; lock
-         (defvar ,lock-defvar (funcall #'bt2:make-lock :name ,lock-name))
+         (defvar ,lock-defvar (bt2:make-lock :name ,lock-name))
 
          ;;; defuns
 
@@ -69,19 +70,19 @@
            (cffi:foreign-free counter-ptr))
 
          (defun ,incr-counter-fname ()
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (incf ,counter-defvar)))
 
          (defun ,closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (gethash counter ,closure-map-defvar)))
 
          (defun (setf ,closure-fname) (closure counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (setf (gethash counter ,closure-map-defvar) closure)))
 
          (defun ,del-closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (remhash counter ,closure-map-defvar)))
 
          (defun ,regist-fname (closure)

@@ -15,6 +15,7 @@
      (flags        :int))
   (handler-case
       (progn
+        (print :before-route)
         (trace-var/route-by-client-data client-data
                                         :client-data client-data
                                         :interp      interp
@@ -23,6 +24,7 @@
                                         :flags       flags)
         ;;
         (when (flags-bit? +tcl-trace-destroyed+ flags)
+          (print :destroyed)
           (trace-var/unregist-cb client-data))
         ;;
         (cffi:null-pointer))
@@ -34,6 +36,7 @@
       ;; error message, unless (exactly one of) the
       ;; TCL_TRACE_RESULT_DYNAMIC and TCL_TRACE_RESULT_OBJECT flags is
       ;; set,
+      (print :error)
       (cffi:with-foreign-string (err-msg-ptr (format nil "~a" c))
         (let ((err-msg-obj-ptr (tcl-new-string-obj err-msg-ptr -1)))
           (tcl-incr-ref-count err-msg-obj-ptr)
@@ -46,13 +49,16 @@
 
 (defun trace-var/+trace (var-name
                          closure
-                         &key flags
+                         &key (flags 0)
                            array-subs)
   (let* ((registration (trace-var/regist-cb closure))
          (client-data  (getf registration :client-data))
          (flags*       (trace-var/enforce-flags flags)))
     (do+chk (tcl-trace-var2)
-            *tcl-interp* var-name array-subs flags*
+            *tcl-interp*
+            var-name
+            (lisp-value-or-nullptr array-subs)
+            flags*
             (cffi:callback %trace-var-proc-cb-cfunc)
             client-data)
     client-data))
@@ -60,12 +66,17 @@
 
 (defun trace-var/-untrace (var-name
                            client-data
-                           &key flags
+                           &key (flags 0)
                              array-subs)
   (let ((flags*       (trace-var/enforce-flags flags)))
-    (tcl-untrace-var2 *tcl-interp* var-name array-subs flags*
-                      (cffi:callback %trace-var-proc-cb-cfunc)
-                      client-data)))
+    (format t "untrace: ~a~%" client-data)
+    ;; (tcl-untrace-var2 *tcl-interp* var-name
+    ;;                   (lisp-value-or-nullptr array-subs)
+    ;;                   flags*
+    ;;                   (cffi:callback %trace-var-proc-cb-cfunc)
+    ;;                   client-data)
+    (print :untraced)
+    ))
 
 
 
