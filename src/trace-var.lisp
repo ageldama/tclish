@@ -73,18 +73,18 @@
                       client-data)))
 
 
-
 (defun trace-var/list-all (var-name
                            &key
                              array-subs)
   (iter (with prev-client-data = (cffi:null-pointer))
     (for client-data = (tcl-var-trace-info2 *tcl-interp*
-                                            var-name array-subs
+                                            var-name
+                                            (lisp-value-or-nullptr array-subs)
                                             0 ;; =flags
-                                            (cffi:callback %var-trace-proc-cb-cfunc)
+                                            (cffi:callback %trace-var-proc-cb-cfunc)
                                             prev-client-data))
     (if (cffi:null-pointer-p client-data)
-        (leave)
+        (terminate)
         (collect client-data))
     (setf prev-client-data client-data)))
 

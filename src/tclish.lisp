@@ -114,7 +114,7 @@
 
    #:->flags-bits #:->flags-bits* #:<-flags-bits #:flags-bit?
 
-   #:trace-var/+trace #:trace-var/-untrace
+   #:trace-var/+trace #:trace-var/-untrace #:trace-var/list-all
    ))
 
 
