@@ -4,7 +4,7 @@
 (def-tcl-callback-pattern
     :cb-prefix "trace-var"
   :one-off? nil
-  :counter-cffi-type :uint32)
+  :counter-cffi-type :uint64)
 
 
 (cffi:defcallback %trace-var-proc-cb-cfunc (:pointer :char)
