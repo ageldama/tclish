@@ -8,7 +8,8 @@
        one-off?
        (counter-cffi-type :uint64)
        (closure-map-initform '(make-hash-table))
-       (lock-timeout 1))
+       ;;(lock-timeout 1)
+       )
 
   (flet  ((fmt->sym (fmt-str &rest args)
             (read-from-string (apply #'format `(nil ,fmt-str ,@args)))))
@@ -70,19 +71,19 @@
            (cffi:foreign-free counter-ptr))
 
          (defun ,incr-counter-fname ()
-           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
+           (bt2:with-lock-held (,lock-defvar)
              (incf ,counter-defvar)))
 
          (defun ,closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
+           (bt2:with-lock-held (,lock-defvar)
              (gethash counter ,closure-map-defvar)))
 
          (defun (setf ,closure-fname) (closure counter)
-           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
+           (bt2:with-lock-held (,lock-defvar)
              (setf (gethash counter ,closure-map-defvar) closure)))
 
          (defun ,del-closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
+           (bt2:with-lock-held (,lock-defvar)
              (remhash counter ,closure-map-defvar)))
 
          (defun ,regist-fname (closure)
