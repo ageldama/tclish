@@ -141,6 +141,12 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 1. [Getting, Setting, and Unsetting Tcl variables with Tcl namespaces](./examples/10-tcl-var.lisp)
 
+1. Auto-Synchronised Variables between Tcl and Lisp through Link
+   Var/Array:
+   1. [Link Unsigned Integer Variable](./examples/11-link-var-uint.lisp)
+   1. [Link String Variable](./examples/12-link-var-string.lisp)
+   1. [Link Fixed-Size Array](./examples/13-link-array-uint.lisp)
+
 
 ## Dependencies
 

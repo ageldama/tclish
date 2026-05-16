@@ -71,6 +71,8 @@
    #:nullptr->nil
    #:<-tcl-int-bool
 
+   #:str->tcl-alloced-charp
+
    #:get-var/str #:get-var/obj #:set-var/str #:set-var/obj
    #:get-var #:set-var #:tcl-var #:unset-var
 
@@ -90,6 +92,22 @@
    #:app-main
 
    #:alias/get #:alias/str #:alias/obj
+
+   #:link/update #:link/-unlink
+   #:link/alloc-var #:link/free-var
+   #:link/+var #:link/read-var #:link/write-var
+
+   #:link/+array
+   #:link/alloc-array #:link/free-array
+   #:link/read-array #:link/write-array
+
+   #:<tcl-var-link-base> #:update
+   #:ptr #:tcl-name #:var-type #:readonly? #:initial-element
+
+   #:<tcl-var-link> #:destroy #:linked-value
+
+   #:<tcl-array-link> #:initial-contents #:size #:destroy #:linked-value-at
+
    ))
 
 
