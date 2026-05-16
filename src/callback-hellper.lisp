@@ -94,19 +94,26 @@
 
          (defun ,unregist-fname (client-data)
            (let ((counter (,counter-cffi-fname client-data)))
-             (,del-closure-fname counter))
-           (,free-counter-cffi-fname client-data))
+             (when (,del-closure-fname counter)
+               (,free-counter-cffi-fname client-data))))
 
          (defun ,route-by-client-data-fname (client-data &rest args)
-           (let* ((counter (,counter-cffi-fname client-data))
-                  (cb (,closure-fname counter)))
+           (let* (
+                  ;;(%dbg-client-data (format t "client-data: ~a~%" client-data))
+                  (counter (,counter-cffi-fname client-data))
+                  ;;(%dbg-counter (format t "counter: ~a~%" counter))
+                  (cb (,closure-fname counter))
+                  ;;(%dbg-cb (format t "cb: ~a~%" cb))
+                  )
              (assert cb (cb)
                      "Callback closure not registered? (~a / ~a)"
                      ,cb-prefix counter)
              ;;
              (unwind-protect (apply cb args)
-               (when ,one-off?
-                   (,unregist-fname client-data)))))
+               (if ,one-off?
+                   (,unregist-fname client-data)
+                   t
+                   ))))
 
 
          ))))
