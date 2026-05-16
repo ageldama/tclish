@@ -1,6 +1,9 @@
 (in-package :tclish)
 
 
+
+;; TODO clos;ify
+
 (defmacro def-tcl-callback-pattern
     (&key
        cb-prefix
