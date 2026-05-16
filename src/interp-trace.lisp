@@ -70,81 +70,34 @@
 
 #|
 
-Tcl_Trace
-Tcl_CreateObjTrace2(interp, level, flags, objProc2, clientData, deleteProc)
 
-
-Tcl_DeleteTrace(interp, trace)
-
-
-
- int (Tcl_CmdObjTraceProc2) (void *clientData, Tcl_Interp *interp,
-	Tcl_Size level, const char *command, Tcl_Command commandInfo, Tcl_Size objc,
-	struct Tcl_Obj *const *objv);
-
-
- void Tcl_CmdObjTraceDeleteProc(void * clientData);
+(defcfun ("Tcl_GetCommandFullName" tcl-get-command-full-name) :void
+  "/* 517 */ EXTERN void
+Tcl_GetCommandFullName(Tcl_Interp *interp, Tcl_Command command, Tcl_Obj *objPtr);"
+  (interp-ptr     tcl-interp-ptr)
+  (command        tcl-command)
+  (obj-ptr        tcl-obj-ptr))
 
 
 
-
-The objProc callback is expected to return a standard Tcl status
-return code. If this code is TCL_OK (the normal case), then the Tcl
-inter‐ preter will invoke the command. Any other return code is
-treated as if the command returned that status, and the command is not
-invoked.
-
-The objProc callback must not modify objv in any way.
-
-You should not call Tcl_DecrRefCount on any of those values unless you
-call Tcl_IncrRefCount on them first.
+(defcfun ("Tcl_GetCommandName" tcl-get-command-name) :string
+  "/* 160 */ EXTERN const char *
+Tcl_GetCommandName(Tcl_Interp *interp, Tcl_Command command);"
+  (interp-ptr tcl-interp-ptr)
+  (command    tcl-command))
 
 
+(defcfun ("Tcl_GetCommandInfoFromToken" tcl-get-command-info-from-token) :int
+  "/* 484 */ EXTERN int
+Tcl_GetCommandInfoFromToken(Tcl_Command token, Tcl_CmdInfo *infoPtr);"
+  (token         tcl-command)
+  (cmd-info-ptr  tcl-cmd-info-ptr))
 
-
-The token may be passed to Tcl_GetCommandName,
-Tcl_GetCommandInfoFromToken, or Tcl_SetCommandInfoFromToken to
-manipulate the definition of the command.
-
-
-int
-Tcl_GetCommandInfoFromToken(token, infoPtr)
-
-              typedef struct {
-                  int isNativeObjectProc;
-                  Tcl_ObjCmdProc *objProc;
-                  void *objClientData;
-                  Tcl_CmdProc *proc;
-                  void *clientData;
-                  Tcl_CmdDeleteProc *deleteProc;
-                  void *deleteData;
-                  Tcl_Namespace *namespacePtr;
-                  Tcl_ObjCmdProc2 *objProc2;
-                  void *objClientData2;
-              } Tcl_CmdInfo;
-
-
-int
-Tcl_SetCommandInfoFromToken(token, infoPtr)
-
-       Tcl_SetCommandInfo  is used to modify the procedures and clientData val‐
-       ues associated with a command.  Its cmdName argument is the  name  of  a
-       command in interp.  cmdName may include :: namespace qualifiers to iden‐
-       tify  a command in a particular namespace.  If this command does not ex‐
-       ist then Tcl_SetCommandInfo returns 0.  Otherwise, it copies the  infor‐
-       mation from *infoPtr to Tcl's internal structure for the command and re‐
-       turns 1.
-
-       Tcl_SetCommandInfoFromToken  is  identical  to Tcl_SetCommandInfo except
-       that it takes a command token...
-
-
-
-
-Tcl_GetCommandFullName(interp, token, objPtr)
-
-       Tcl_GetCommandFullName does not modify the reference count of its objPtr
-       argument, but does require that the object be unshared.
+(defcfun ("Tcl_SetCommandInfoFromToken" tcl-set-command-info-from-token) :int
+  "/* 485 */ EXTERN int
+Tcl_SetCommandInfoFromToken(Tcl_Command token, const Tcl_CmdInfo *infoPtr);"
+  (token         tcl-command)
+  (cmd-info-ptr  tcl-cmd-info-ptr))
 
 
 
