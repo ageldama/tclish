@@ -2,7 +2,7 @@
 
 
 
-;; TODO clos;ify
+;; TODO one-off?
 
 (defmacro def-tcl-callback-pattern
     (&key
@@ -26,9 +26,15 @@
 
           (counter-cffi-fname  (fmt->sym "~a/counter-cffi" cb-prefix))
 
-          (closure-fname       (fmt->sym "~a/cb"       cb-prefix))
+          (closure-fname       (fmt->sym "~a/cb"           cb-prefix))
           (del-closure-fname   (fmt->sym "~a/del-cb"       cb-prefix))
           (incr-counter-fname  (fmt->sym "~a/incr-count"   cb-prefix))
+
+          (regist-fname        (fmt->sym "~a/regist-cb"    cb-prefix))
+          (unregist-fname      (fmt->sym "~a/unregist-cb"  cb-prefix))
+
+          (route-by-client-data-fname     (fmt->sym "~a/route-by-client-data"
+                                                    cb-prefix))
 
           )
 
@@ -78,6 +84,28 @@
          (defun ,del-closure-fname (counter)
            (bt2:with-lock-held (,lock-defvar)
              (remhash counter ,closure-map-defvar)))
+
+         (defun ,regist-fname (closure)
+           (let* ((counter       (,incr-counter-fname))
+                  (counter-cffi  (,alloc-counter-cffi-fname counter)))
+             (setf (,closure-fname counter) closure)
+             (list :counter counter
+                   :client-data counter-cffi)))
+
+         (defun ,unregist-fname (client-data)
+           (let ((counter (,counter-cffi-fname client-data)))
+             (,del-closure-fname counter))
+           (,free-counter-cffi-fname client-data))
+
+         (defun ,route-by-client-data-fname (client-data &rest args)
+           (let* ((counter (,counter-cffi-fname client-data))
+                  (cb (,closure-fname counter)))
+             (assert cb (cb)
+                     "Callback closure not registered? (~a / ~a)"
+                     ,cb-prefix counter)
+             ;;
+             (apply cb args)))
+
 
          ))))
 
