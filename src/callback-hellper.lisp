@@ -7,7 +7,8 @@
        cb-prefix
        one-off?
        (counter-cffi-type :uint64)
-       (closure-map-initform '(make-hash-table)))
+       (closure-map-initform '(make-hash-table))
+       (lock-timeout 1))
 
   (flet  ((fmt->sym (fmt-str &rest args)
             (read-from-string (apply #'format `(nil ,fmt-str ,@args)))))
@@ -46,7 +47,7 @@
          (defvar ,closure-map-defvar ,closure-map-initform)
 
          ;;; lock
-         (defvar ,lock-defvar (funcall #'bt2:make-lock :name ,lock-name))
+         (defvar ,lock-defvar (bt2:make-lock :name ,lock-name))
 
          ;;; defuns
 
@@ -69,19 +70,19 @@
            (cffi:foreign-free counter-ptr))
 
          (defun ,incr-counter-fname ()
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (incf ,counter-defvar)))
 
          (defun ,closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (gethash counter ,closure-map-defvar)))
 
          (defun (setf ,closure-fname) (closure counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (setf (gethash counter ,closure-map-defvar) closure)))
 
          (defun ,del-closure-fname (counter)
-           (bt2:with-lock-held (,lock-defvar)
+           (bt2:with-lock-held (,lock-defvar :timeout ,lock-timeout)
              (remhash counter ,closure-map-defvar)))
 
          (defun ,regist-fname (closure)
@@ -93,19 +94,26 @@
 
          (defun ,unregist-fname (client-data)
            (let ((counter (,counter-cffi-fname client-data)))
-             (,del-closure-fname counter))
-           (,free-counter-cffi-fname client-data))
+             (when (,del-closure-fname counter)
+               (,free-counter-cffi-fname client-data))))
 
          (defun ,route-by-client-data-fname (client-data &rest args)
-           (let* ((counter (,counter-cffi-fname client-data))
-                  (cb (,closure-fname counter)))
+           (let* (
+                  ;;(%dbg-client-data (format t "client-data: ~a~%" client-data))
+                  (counter (,counter-cffi-fname client-data))
+                  ;;(%dbg-counter (format t "counter: ~a~%" counter))
+                  (cb (,closure-fname counter))
+                  ;;(%dbg-cb (format t "cb: ~a~%" cb))
+                  )
              (assert cb (cb)
                      "Callback closure not registered? (~a / ~a)"
                      ,cb-prefix counter)
              ;;
              (unwind-protect (apply cb args)
-               (when ,one-off?
-                   (,unregist-fname client-data)))))
+               (if ,one-off?
+                   (,unregist-fname client-data)
+                   t
+                   ))))
 
 
          ))))

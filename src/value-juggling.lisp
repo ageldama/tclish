@@ -155,3 +155,33 @@
 
 
 
+
+
+
+(defun ->flags-bits (flags-list)
+  (let ((flags 0))
+    (iter (for flag in flags-list)
+      (setf flags (logior flags flag)))
+    ;;
+    flags))
+
+(defun ->flags-bits* (&rest args)
+  (funcall #'->flags-bits args))
+
+(defun flags-bit? (needle haystack)
+  (eq needle (logand needle haystack)))
+
+(defun <-flags-bits (flags possible-flags)
+  (iter (for flag in possible-flags)
+    (when (flags-bit? flag flags)
+      (collect flag))))
+
+
+
+
+
+
+
+
+
+
