@@ -177,10 +177,12 @@
 
 
 (defun link/read-array (ptr var-type index)
-  (cffi:mem-aref ptr var-type index))
+  (let ((cffi-type  (link/array-cffi-type var-type)))
+    (cffi:mem-aref ptr cffi-type index)))
 
 (defun link/write-array (ptr var-type index new-value)
-  (setf (cffi:mem-aref ptr var-type index) new-value))
+  (let ((cffi-type  (link/array-cffi-type var-type)))
+    (setf (cffi:mem-aref ptr cffi-type index) new-value)))
 
 
 
@@ -220,7 +222,7 @@
 
 
 
-(defclass <tcl-var-link> ()
+(defclass <tcl-var-link-base> ()
   ((ptr  :reader ptr
          :initform (cffi:null-pointer))
    (tcl-name   :reader tcl-name
@@ -235,11 +237,23 @@
                     :reader initial-element)
    ))
 
-
 (defmethod initialize-instance :before
-    ((var-link <tcl-var-link>) &rest args)
+    ((var-link-base <tcl-var-link-base>) &rest args)
   (assert (member :tcl-name args) (args))
   (assert (member :var-type args) (args)))
+
+(defmethod update ((var-link <tcl-var-link-base>))
+  (link/update (tcl-name var-link)))
+
+
+
+
+
+
+
+
+(defclass <tcl-var-link> (<tcl-var-link-base>)
+  ())
 
 
 (defmethod initialize-instance :after
@@ -259,9 +273,6 @@
             (var-type var-link) (readonly? var-link)
             (initial-element var-link))))
 
-(defmethod update ((var-link <tcl-var-link>))
-  (link/update (tcl-name var-link)))
-
 (defmethod destroy ((var-link <tcl-var-link>))
   (link/-unlink (tcl-name var-link))
   (link/free-var (ptr var-link) (var-type var-link))
@@ -277,8 +288,49 @@
 
 
 
+
 
-;; TODO get/array
-;; TODO setf/array
 
+
+(defclass <tcl-array-link> (<tcl-var-link-base>)
+  ((size :initarg :size
+         :initform -1
+         :reader size)
+   (initial-contents :initarg :initial-contents
+                     :initform nil
+                     :reader initial-contents)
+   ))
+
+
+(defmethod initialize-instance :after
+    ((arr-link <tcl-array-link>) &key)
+  (with-slots (ptr) arr-link
+    (setf ptr (link/+array (tcl-name arr-link)
+                           (var-type arr-link) (size arr-link)
+                           :readonly? (readonly? arr-link)
+                           :initial-element (initial-element arr-link)
+                           :initial-contents (initial-contents arr-link)
+                           ))))
+
+(defmethod print-object ((arr-link <tcl-array-link>) stream)
+  (print-unreadable-object (arr-link stream :type t :identity t)
+    (format stream
+            "ptr:~a  tcl-name:~a  var-type:~a  readonly?:~a  size:~a  initial-element:~a"
+            (ptr arr-link) (tcl-name arr-link)
+            (var-type arr-link) (readonly? arr-link)
+            (size arr-link) (initial-element arr-link))))
+
+
+(defmethod destroy ((arr-link <tcl-array-link>))
+  (link/-unlink (tcl-name arr-link))
+  (link/free-array (ptr arr-link) (var-type arr-link))
+  (with-slots (ptr) arr-link (setf ptr nil)))
+
+
+
+(defmethod linked-value-at ((arr-link <tcl-array-link>) index)
+  (link/read-array (ptr arr-link) (var-type arr-link) index))
+
+(defmethod (setf linked-value-at) (new-value (arr-link <tcl-array-link>) index)
+  (link/write-array (ptr arr-link) (var-type arr-link) index new-value))
 

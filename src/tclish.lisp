@@ -101,8 +101,13 @@
    #:link/alloc-array #:link/free-array
    #:link/read-array #:link/write-array
 
-   #:<tcl-var-link> #:update #:destroy #:linked-value
+   #:<tcl-var-link-base> #:update
    #:ptr #:tcl-name #:var-type #:readonly? #:initial-element
+
+   #:<tcl-var-link> #:destroy #:linked-value
+
+   #:<tcl-array-link> #:initial-contents #:size #:destroy #:linked-value-at
+
    ))
 
 
