@@ -21,6 +21,10 @@
                                         :part1       part1
                                         :part2       part2
                                         :flags       flags)
+        ;;
+        (when (flags-bit? +tcl-trace-destroyed+ flags)
+          (trace-var/unregist-cb client-data))
+        ;;
         (cffi:null-pointer))
     (error (c)
       ;; Under normal conditions trace procedures should return NULL,
@@ -65,6 +69,19 @@
 
 
 
+(defun trace-var/list-all (var-name
+                           &key
+                             array-subs)
+  (iter (with prev-client-data = (cffi:null-pointer))
+    (for client-data = (tcl-var-trace-info2 *tcl-interp*
+                                            var-name array-subs
+                                            0 ;; =flags
+                                            (cffi:callback %var-trace-proc-cb-cfunc)
+                                            prev-client-data))
+    (if (cffi:null-pointer-p client-data)
+        (leave)
+        (collect client-data))
+    (setf prev-client-data client-data)))
 
-;; TODO var-info
+
 
