@@ -8,6 +8,19 @@
      (alexandria:nconcf ,place ,list-to-nconc)))
 
 
+(defun remhash-by-value (val ht &key (test #'eq))
+  (let ((keys-to-delete (iter (for (k v) in-hashtable ht)
+                          (when (funcall test val) (collect k)))))
+    (dolist (k keys-to-delete)
+      (remhash k ht))))
+
+
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+nil (pushnew :tclish-safer-alternative *features*)
+  )
+
 
 
 
@@ -70,6 +83,10 @@
 
 
 
+#+tclish-safer-alternative
+(defvar *link/var-str-ht* (make-hash-table))
+
+
 (defun link/alloc-var (var-type &key initial-element)
   (assert (link/var-type? var-type) (var-type))
   ;;
@@ -83,7 +100,12 @@
                       (list :initial-element initial-element))
            (apply #'cffi:foreign-alloc alloc-args))))))
 
+#+tclish-safer-alternative
+(defun link/alloc-var-str (initial-element)
+  (declare (ignore initial-element))
+  (gensym))
 
+#-tclish-safer-alternative
 (defun link/alloc-var-str (initial-element)
   (let ((char* (cffi:pointer-address
                 (if initial-element
@@ -97,11 +119,18 @@
 (defun link/free-var (ptr var-type)
   (assert (link/var-type? var-type) (var-type))
   (let ((cffi-type  (link/var-cffi-type var-type)))
-    (case cffi-type
-      ('(:pointer :char) (link/free-var-str ptr))
-      (t                 (cffi:foreign-free ptr)))))
+    (cond
+      ((equal cffi-type '(:pointer :char))
+       (link/free-var-str ptr))
+      (t (cffi:foreign-free ptr)))))
 
+#+tclish-safer-alternative
 (defun link/free-var-str (ptr)
+  (remhash ptr *link/var-str-ht*))
+
+#-tclish-safer-alternative
+(defun link/free-var-str (ptr)
+  (print :FREE-VAR-STR)
   (when (and (not (null ptr))
              (not (cffi:null-pointer-p ptr)))
     (let ((addr (cffi:mem-ref ptr :intptr)))
@@ -120,10 +149,15 @@
       ((equal cffi-type
               '(:pointer :char))
        (link/read-var-str ptr))
-      (t
-       (cffi:mem-ref ptr cffi-type)))))
+      (t (cffi:mem-ref ptr cffi-type)))))
 
+#+tclish-safer-alternative
+(defun link/read-var-str (ptr)
+  (let ((tcl-var-name (gethash ptr *link/var-str-ht*)))
+    (assert tcl-var-name (tcl-var-name))
+    (tcl-var tcl-var-name :as :string)))
 
+#-tclish-safer-alternative
 (defun link/read-var-str (ptr)
   (cffi:foreign-string-to-lisp
    (cffi:make-pointer (cffi:mem-ref ptr :intptr))))
@@ -139,7 +173,13 @@
       (t
        (setf (cffi:mem-ref ptr cffi-type) new-value)))))
 
+#+tclish-safer-alternative
+(defun link/write-var-str (ptr new-value)
+  (let ((tcl-var-name (gethash ptr *link/var-str-ht*)))
+    (assert tcl-var-name (tcl-var-name))
+    (setf (tcl-var tcl-var-name :as :string) new-value)))
 
+#-tclish-safer-alternative
 (defun link/write-var-str (ptr new-value)
   ;; 현재값이 있다면 해제:
   (let ((char* (cffi:mem-ref ptr :intptr)))
@@ -196,6 +236,12 @@
                       (logior +tcl-link-read-only+ var-type)
                       var-type)))
     ;;
+    #+tclish-safer-alternative
+    (if (eq +tcl-link-string+ var-type)
+        (setf (gethash var-ptr *link/var-str-ht*) var-name)
+        ;; else:
+        (do+chk (tcl-link-var) *tcl-interp* var-name var-ptr flags))
+    #-tclish-safer-alternative
     (do+chk (tcl-link-var) *tcl-interp* var-name var-ptr flags)
     var-ptr))
 
