@@ -153,6 +153,10 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 1. *Unstable* [Tracing Tcl Commands at Lisp](./examples/16-trace-cmd.lisp)
 
+1. A good base to build a stepping debugger and performance profiler
+   on:
+   - [Interpreter Trace](./examples/17-interp-trace.lisp)
+
 
 ## Dependencies
 

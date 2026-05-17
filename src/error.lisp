@@ -20,3 +20,13 @@
     (&rest args)
   (let ((err-msg (tcl-get-string-result *tcl-interp*)))
     (apply #'pack-tcl-error :message err-msg args)))
+
+
+
+(defun set-tcl-result-string (s)
+  (cffi:with-foreign-string (str-ptr s)
+    (tcl-set-obj-result *tcl-interp*
+                        (tcl-new-string-obj str-ptr -1))))
+
+(defun set-tcl-result-from-error (an-error)
+  (set-tcl-result-string (format nil "~a" an-error)))
