@@ -48,8 +48,8 @@
      &key
        (level +tcl-trace-level-any+)
        (flags (->flags-bits* +tcl-allow-inline-compilation+
-                             +tcl-trace-enter-exec+
-                             +tcl-trace-leave-exec+
+                             ;; +tcl-trace-enter-exec+
+                             ;; +tcl-trace-leave-exec+
                              )))
   ;;
   (let* ((registration (interp-trace/regist-cb closure))
