@@ -6,6 +6,23 @@
 
 
 
+(defun tracer-1-func
+    (&rest args
+     &key
+       client-data level command command-info objc objv
+       )
+  (declare (ignorable args client-data
+                      level command command-info objc objv))
+
+  (labels ((lvl-hdr (n &key (stream nil) (ch "-"))
+             (format stream "~v@{~A~:*~}" n ch)))
+
+    (format t "~a }} TRACER #1 {{~T~TCMD=\"~a\"~%"
+            (lvl-hdr level) command)
+  ))
+
+
+
 (defun main ()
   (app-main
       ()
@@ -14,18 +31,13 @@
       (eval-tcl "proc f {} {p F; g}")
       (eval-tcl "proc g {} {p G}")
 
-      (let* ((tracer-1  (interp-trace/+trace
-                         (lambda (&rest args)
-                           (format t "TRACER-1: ~a~%" args))))
-
-             (tracer-2  (interp-trace/+trace
-                         (lambda (&rest args)
-                           (format t "TRACER-2: ~a~%" args))
-                         :flags (->flags-bits* +tcl-trace-leave-exec+))))
+      (let* ((tracer-1  (interp-trace/+trace #'tracer-1-func)))
 
         (eval-tcl "f")
 
-        (interp-trace/-delete tracer-2)
+        (interp-trace/-delete tracer-1)
+
+        (format t "~80<~;--- TRACERS REMOVED ---~;~>~%")
 
         (eval-tcl "f")
         )))

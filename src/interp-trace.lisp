@@ -49,7 +49,8 @@
        (level +tcl-trace-level-any+)
        (flags (->flags-bits* +tcl-allow-inline-compilation+
                              +tcl-trace-enter-exec+
-                             +tcl-trace-leave-exec+)))
+                             +tcl-trace-leave-exec+
+                             )))
   ;;
   (let* ((registration (interp-trace/regist-cb closure))
          (client-data  (getf registration :client-data)))
@@ -67,39 +68,3 @@
   (tcl-delete-trace *tcl-interp* trace))
 
 
-
-#|
-
-
-(defcfun ("Tcl_GetCommandFullName" tcl-get-command-full-name) :void
-  "/* 517 */ EXTERN void
-Tcl_GetCommandFullName(Tcl_Interp *interp, Tcl_Command command, Tcl_Obj *objPtr);"
-  (interp-ptr     tcl-interp-ptr)
-  (command        tcl-command)
-  (obj-ptr        tcl-obj-ptr))
-
-
-
-(defcfun ("Tcl_GetCommandName" tcl-get-command-name) :string
-  "/* 160 */ EXTERN const char *
-Tcl_GetCommandName(Tcl_Interp *interp, Tcl_Command command);"
-  (interp-ptr tcl-interp-ptr)
-  (command    tcl-command))
-
-
-(defcfun ("Tcl_GetCommandInfoFromToken" tcl-get-command-info-from-token) :int
-  "/* 484 */ EXTERN int
-Tcl_GetCommandInfoFromToken(Tcl_Command token, Tcl_CmdInfo *infoPtr);"
-  (token         tcl-command)
-  (cmd-info-ptr  tcl-cmd-info-ptr))
-
-(defcfun ("Tcl_SetCommandInfoFromToken" tcl-set-command-info-from-token) :int
-  "/* 485 */ EXTERN int
-Tcl_SetCommandInfoFromToken(Tcl_Command token, const Tcl_CmdInfo *infoPtr);"
-  (token         tcl-command)
-  (cmd-info-ptr  tcl-cmd-info-ptr))
-
-
-
-
-|#
