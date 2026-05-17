@@ -1,56 +1,51 @@
 (in-package :tclish)
 
 
-(defun tcl-command/full-name (cmd)
+(defun cmd-info/full-name (cmd-obj)
   (let ((result (tcl-new-obj))) ;; refcnt=0
     (unwind-protect
          (progn
            (tcl-incr-ref-count result) ;; refcnt++
-           (tcl-get-command-full-name *tcl-interp* cmd result)
-           (cffi:foreign-string-to-lisp
-            (tcl-get-string-from-obj result (cffi:null-pointer))))
+           (tcl-get-command-full-name *tcl-interp* cmd-obj result)
+           (tcl-get-string-from-obj result (cffi:null-pointer)))
       ;; cleanup:
       (tcl-decr-ref-count result) ;; refcnt-- == 0.
       )))
 
 
 
+(defun cffi/alloc+bzero (cffi-type)
+  (let ((ptr (cffi:foreign-alloc cffi-type)))
+    (mem-zero ptr cffi-type)
+    ptr))
 
 
-#|
+(defun cmd-info/from-cmd-obj (cmd-obj)
+  (let ((cmd-info (cffi/alloc+bzero '(:struct tcl-cmd-info))))
+    (do+chk (tcl-get-command-info-from-token :tcl-ok 1)
+            cmd-obj cmd-info)
+    cmd-info))
+
+(defun cmd-info/free (cmd-info) (cffi:foreign-free cmd-info))
 
 
-(defcfun ("Tcl_GetCommandFullName" tcl-get-command-full-name) :void
-  "/* 517 */ EXTERN void
-Tcl_GetCommandFullName(Tcl_Interp *interp, Tcl_Command command, Tcl_Obj *objPtr);"
-  (interp-ptr     tcl-interp-ptr)
-  (command        tcl-command)
-  (obj-ptr        tcl-obj-ptr))
+(defun (setf cmd-info/from-cmd-obj) (new-cmd-info cmd-obj)
+  (do+chk (tcl-set-command-info-from-token :tcl-ok 1)
+          cmd-obj new-cmd-info))
 
 
-
-(defcfun ("Tcl_GetCommandName" tcl-get-command-name) :string
-  "/* 160 */ EXTERN const char *
-Tcl_GetCommandName(Tcl_Interp *interp, Tcl_Command command);"
-  (interp-ptr tcl-interp-ptr)
-  (command    tcl-command))
-
-
-(defcfun ("Tcl_GetCommandInfoFromToken" tcl-get-command-info-from-token) :int
-  "/* 484 */ EXTERN int
-Tcl_GetCommandInfoFromToken(Tcl_Command token, Tcl_CmdInfo *infoPtr);"
-  (token         tcl-command)
-  (cmd-info-ptr  tcl-cmd-info-ptr))
-
-(defcfun ("Tcl_SetCommandInfoFromToken" tcl-set-command-info-from-token) :int
-  "/* 485 */ EXTERN int
-Tcl_SetCommandInfoFromToken(Tcl_Command token, const Tcl_CmdInfo *infoPtr);"
-  (token         tcl-command)
-  (cmd-info-ptr  tcl-cmd-info-ptr))
-
-
-
-
-|#
+(defmacro with-cmd-info
+    ((&key v-cmd-info cmd-obj modify?) &rest body)
+  (assert v-cmd-info (v-cmd-info))
+  (assert cmd-obj    (cmd-obj))
+  `(let ((,v-cmd-info (cmd-info/from-cmd-obj ,cmd-obj)))
+     (unwind-protect
+          (progn
+            ,@body
+            (when ,modify?
+              (setf (cmd-info/from-cmd-obj ,cmd-obj)
+                    ,v-cmd-info)))
+       ;; cleanup:
+       (cmd-info/free ,v-cmd-info))))
 
 

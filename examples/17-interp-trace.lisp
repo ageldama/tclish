@@ -9,23 +9,27 @@
 (defun tracer-1-func
     (&rest args
      &key
-       client-data level command command-info objc objv
-       )
+       client-data level
+       command-name command-obj objc objv)
   (declare (ignorable args client-data
-                      level command command-info objc objv))
+                      level command-name command-obj objc objv))
 
   (labels ((lvl-hdr (n &key (stream nil) (ch "-"))
              (format stream "~v@{~A~:*~}" n ch)))
 
-    (format t "~a }} TRACER #1 {{~T~TCMD=\"~a\"~%"
-            (lvl-hdr level) command)
-  ))
+    (with-cmd-info (:v-cmd-info cmd-info :cmd-obj command-obj
+                    :modify? nil)
+                   (format t "~a }} TRACER #1 {{~T~TCMD=\"~a\" (~A)~%"
+                           (lvl-hdr level) command-name
+                           (tclish::cmd-info/full-name command-obj)
+                           ))
+    ))
 
 
 
 (defun main ()
   (app-main
-      ()
+      (:terminate-without-deinit t)
 
       (def-cmd/p)
       (eval-tcl "proc f {} {p F; g}")

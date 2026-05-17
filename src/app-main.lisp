@@ -27,6 +27,8 @@
 
         stdout-stream
         stderr-stream
+
+        (terminate-without-deinit nil)
         )
      &rest body)
 
@@ -64,20 +66,20 @@
                      ,@(when stdout-stream
                          `((tclish/redir-to-outstream-chan:regist
                             ,%stdout-chan :tcl-interp-ptr    *tcl-interp*
-                                          :tcl-std-chan-type +tcl-stdout+)))
+                            :tcl-std-chan-type +tcl-stdout+)))
                      ,@(when stderr-stream
                          `((tclish/redir-to-outstream-chan:regist
                             ,%stderr-chan :tcl-interp-ptr    *tcl-interp*
-                                          :tcl-std-chan-type +tcl-stderr+)))
+                            :tcl-std-chan-type +tcl-stderr+)))
                      ,@(when after-init (list after-init))
                      (progn ,@body)
                      ,@(when tk-main-loop? `((tk-main-loop))))
 
            ;; cleanup:
-           (progn
+           (unless ,terminate-without-deinit
              ,@(when before-deinit (list before-deinit))
              ,@(when zip-filename
-                `((umnt-zipfs :mnt-point ,zipfs-mnt-point)))
+                 `((umnt-zipfs :mnt-point ,zipfs-mnt-point)))
              ,@(when stderr-stream `((tclish/redir-to-outstream-chan:dealloc
                                       ,%stderr-chan)))
              ,@(when stdout-stream `((tclish/redir-to-outstream-chan:dealloc

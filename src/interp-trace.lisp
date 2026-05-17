@@ -15,8 +15,8 @@
     ((client-data    :pointer)
      (interp         tcl-interp-ptr)
      (level          tcl-size)
-     (command        :string)
-     (command-info   tcl-command)
+     (command-name   :string)
+     (command-obj    tcl-command)
      (objc           tcl-size)
      (objv           (:pointer tcl-obj-ptr)))
   (declare (ignorable interp))
@@ -26,8 +26,8 @@
          client-data
          :client-data   client-data
          :level         level
-         :command       command
-         :command-info  command-info
+         :command-name  command-name
+         :command-obj   command-obj
          :objc          objc
          :objv          objv)
         +tcl-ok+)

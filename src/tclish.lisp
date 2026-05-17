@@ -128,6 +128,8 @@
    #:+tcl-trace-level-only-top-and-one-more+
    #:interp-trace/+trace #:interp-trace/-delete
 
+   #:cmd-info/full-name #:cmd-info/from-cmd-obj #:cmd-info/free
+   #:with-cmd-info
    ))
 
 
