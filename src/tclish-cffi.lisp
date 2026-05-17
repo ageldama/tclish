@@ -4,6 +4,7 @@
    #:c-memset
    #:c-memset*
    #:mem-zero
+   #:cffi/alloc+bzero
    #:c-strlen
    #:c-memcpy
    #:c-string-array-to-string-list
@@ -31,6 +32,12 @@
 
 (defmacro mem-zero (ptr type-spec)
   `(c-memset* ,ptr 0 ,type-spec))
+
+
+(defun cffi/alloc+bzero (cffi-type)
+  (let ((ptr (cffi:foreign-alloc cffi-type)))
+    (mem-zero ptr cffi-type)
+    ptr))
 
 
 (defcfun ("strlen" c-strlen) :size

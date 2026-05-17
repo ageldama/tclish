@@ -14,10 +14,6 @@
 
 
 
-(defun cffi/alloc+bzero (cffi-type)
-  (let ((ptr (cffi:foreign-alloc cffi-type)))
-    (mem-zero ptr cffi-type)
-    ptr))
 
 
 (defun cmd-info/from-cmd-obj (cmd-obj)
