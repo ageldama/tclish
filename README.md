@@ -572,21 +572,21 @@ Please read the [./LICENSE](./LICENSE)
 
 - SCOPE: EXTERNAL
 - SLOTS:
-   - CLASS-SLOT `NAME` / TYPE: `STRING`
+   - SLOT `NAME` / TYPE: `STRING`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:NAME`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:NAME)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `LISP-STREAM` / TYPE: `NIL`
+   - SLOT `LISP-STREAM` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:LISP-STREAM`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:LISP-STREAM)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `TRIM` / TYPE: `NIL`
+   - SLOT `TRIM` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:TRIM`
@@ -594,35 +594,35 @@ Please read the [./LICENSE](./LICENSE)
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:TRIM)`
       - WRITERS: `NIL`
       - nil | :left | :right | :both | (func (str) -> str)
-   - CLASS-SLOT `SKIP-0-LEN` / TYPE: `BOOLEAN`
+   - SLOT `SKIP-0-LEN` / TYPE: `BOOLEAN`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `T`
       - INITARG: `:SKIP-0-LEN`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:SKIP-0-LEN)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CHAN-TYPE-PTR` / TYPE: `NIL`
+   - SLOT `CHAN-TYPE-PTR` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:CHAN-TYPE-PTR)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CLIENT-DATA` / TYPE: `NIL`
+   - SLOT `CLIENT-DATA` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:CLIENT-DATA)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `TCL-CHAN` / TYPE: `NIL`
+   - SLOT `TCL-CHAN` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH/REDIR-TO-OUTSTREAM-CHAN:TCL-CHAN)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `TCL-STD-CHAN-TYPE` / TYPE: `NIL`
+   - SLOT `TCL-STD-CHAN-TYPE` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
@@ -777,14 +777,14 @@ Please read the [./LICENSE](./LICENSE)
 
 - SCOPE: EXTERNAL
 - SLOTS:
-   - CLASS-SLOT `SIZE` / TYPE: `NIL`
+   - SLOT `SIZE` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `-1`
       - INITARG: `:SIZE`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:SIZE)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `INITIAL-CONTENTS` / TYPE: `NIL`
+   - SLOT `INITIAL-CONTENTS` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:INITIAL-CONTENTS`
@@ -802,28 +802,28 @@ Please read the [./LICENSE](./LICENSE)
 
 - SCOPE: EXTERNAL
 - SLOTS:
-   - CLASS-SLOT `CMD-NAME` / TYPE: `NIL`
+   - SLOT `CMD-NAME` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:CMD-NAME`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:CMD-NAME)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `FLAGS` / TYPE: `NIL`
+   - SLOT `FLAGS` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `0`
       - INITARG: `:FLAGS`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:FLAGS)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CB-CLOSURE` / TYPE: `NIL`
+   - SLOT `CB-CLOSURE` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:CB-CLOSURE`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:CB-CLOSURE)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CLIENT-DATA` / TYPE: `NIL`
+   - SLOT `CLIENT-DATA` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
@@ -841,35 +841,35 @@ Please read the [./LICENSE](./LICENSE)
 
 - SCOPE: EXTERNAL
 - SLOTS:
-   - CLASS-SLOT `PTR` / TYPE: `NIL`
+   - SLOT `PTR` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `(CFFI-SYS:NULL-POINTER)`
       - INITARG: `NIL`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:PTR)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `TCL-NAME` / TYPE: `NIL`
+   - SLOT `TCL-NAME` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:TCL-NAME`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:TCL-NAME)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `VAR-TYPE` / TYPE: `NIL`
+   - SLOT `VAR-TYPE` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:VAR-TYPE`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:VAR-TYPE)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `READONLY?` / TYPE: `NIL`
+   - SLOT `READONLY?` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:READONLY?`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:READONLY?)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `INITIAL-ELEMENT` / TYPE: `NIL`
+   - SLOT `INITIAL-ELEMENT` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:INITIAL-ELEMENT`
@@ -898,35 +898,35 @@ Please read the [./LICENSE](./LICENSE)
 
 - SCOPE: EXTERNAL
 - SLOTS:
-   - CLASS-SLOT `VAR-NAME` / TYPE: `NIL`
+   - SLOT `VAR-NAME` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:VAR-NAME`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:VAR-NAME)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `ARRAY-SUBS` / TYPE: `NIL`
+   - SLOT `ARRAY-SUBS` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:ARRAY-SUBS`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:ARRAY-SUBS)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `FLAGS` / TYPE: `NIL`
+   - SLOT `FLAGS` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `0`
       - INITARG: `:FLAGS`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:FLAGS)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CB-CLOSURE` / TYPE: `NIL`
+   - SLOT `CB-CLOSURE` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `:CB-CLOSURE`
       - ACCESSOR: `NIL`
       - READERS: `(TCLISH:CB-CLOSURE)`
       - WRITERS: `NIL`
-   - CLASS-SLOT `CLIENT-DATA` / TYPE: `NIL`
+   - SLOT `CLIENT-DATA` / TYPE: `NIL`
       - ALLOCATION: `INSTANCE`
       - INITFORM: `NIL`
       - INITARG: `NIL`
@@ -2651,4 +2651,4 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 
 
 --------------------------------
-Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T00:55:05.558080+09:00 by https://github.com/ageldama
+Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T00:58:21.531796+09:00 by https://github.com/ageldama
