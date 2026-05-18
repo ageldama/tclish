@@ -149,7 +149,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
 1. [Interpreter Cleanup Callback](./examples/14-call-when-deleted.lisp)
 
-1. [Tracing Tcl Variables at Lisp](./examples/15-trace-var.lisp)
+1. *Unstable* [Tracing Tcl Variables at Lisp](./examples/15-trace-var.lisp)
 
 1. *Unstable* [Tracing Tcl Commands at Lisp](./examples/16-trace-cmd.lisp)
 
