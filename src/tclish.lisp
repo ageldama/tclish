@@ -140,3 +140,21 @@
 (defvar *tcl-interp* nil)
 
 
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (get :tclish :doqumen)
+        `(:sections (
+                     ,#p"src/title.md"
+                     :toc
+                     ,#p"src/intro.md"
+                     ,#p"src/examples.md"
+                     ,#p"src/getting-started.md"
+                     ,#p"src/support.md"
+                     ,#p"src/license.md"
+                     :api-ref
+                     |footer (:copyright " by https://github.com/ageldama")|
+                     ))))
+
+;; (ql:quickload :doqumen)
+;; (doqumen:build-doc :tclish :output-file #p"README.md")
