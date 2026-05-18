@@ -19,6 +19,9 @@
    1. [tclish](#srctitlemd_25FF126ED55098F5A3ADE90FC9604473)
    1. [Table of Contents](#toc_6994206AA5146E62315E61B6ECF6F56B)
    1. [Introduction](#srcintromd_1F1968DB82DBDB250C1C2FC9B7B5E3E2)
+      1. [Embedding Tcl/Tk Interpreter in Lisp application](#srcembeddingmd_A40738E564E2DC4DF8E7FC861EF3C645)
+      1. [Extending Tcl/Tk in Lisp](#srcextendingmd_0B78F1C4869C9DDC9AC893925CDA1D68)
+      1. [Comparison Table](#srccomparisonmd_B35A98BD4CB0C36DF66D5D9CC54CCE3F)
    1. [Examples](#srcexamplesmd_AA62A0DF0FC45CCB3A15A661B4D674EA)
    1. [Dependencies](#srcgetting-startedmd_A75A5DAA4F7310D9E1BEBC2021F72C16)
    1. [Supporting](#srcsupportmd_E54E17F75D771528488BEBED6C50185B)
@@ -284,6 +287,10 @@ All with Easy and Powerful Lisp DSLs.
 Interested? Please refer the "Examples" section below.
 
 
+
+<a name="srcembeddingmd_A40738E564E2DC4DF8E7FC861EF3C645"></a>
+
+
 ### Embedding Tcl/Tk Interpreter in Lisp application
 
 ```lisp
@@ -300,6 +307,7 @@ Interested? Please refer the "Examples" section below.
   [Starkit](https://wiki.tcl-lang.org/page/Starkit) ⭐
 * (*NOTE* Tk DSL will be available soon, I'm working on it😅)
 
+<a name="srcextendingmd_0B78F1C4869C9DDC9AC893925CDA1D68"></a>
 
 ### Extending Tcl/Tk in Lisp
 
@@ -312,12 +320,13 @@ Interested? Please refer the "Examples" section below.
           "puts {WAS Awesome}")
 ```
 
+<a name="srccomparisonmd_B35A98BD4CB0C36DF66D5D9CC54CCE3F"></a>
 
 
 
 
 
-### Comparasion Table
+### Comparison Table
 
 A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 
@@ -2617,4 +2626,4 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 
 
 --------------------------------
-Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T00:04:52.302276+09:00 by https://github.com/ageldama
+Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T00:38:25.625782+09:00 by https://github.com/ageldama

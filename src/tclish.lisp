@@ -147,7 +147,12 @@
         `(:sections (
                      ,#p"src/title.md"
                      :toc
-                     ,#p"src/intro.md"
+                     (
+                      ,#p"src/intro.md"
+                      ,#p"src/embedding.md"
+                      ,#p"src/extending.md"
+                      ,#p"src/comparison.md"
+                      )
                      ,#p"src/examples.md"
                      ,#p"src/getting-started.md"
                      ,#p"src/support.md"
