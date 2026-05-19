@@ -51,13 +51,15 @@
 
 
 (defun c-string-array-to-string-list (ptr count)
+  "Converts an array of C-strings (`PTR` / `char**`) with length of `COUNT` into a
+list of lisp strings."
   (loop for i from 0 below count
         for str-ptr = (cffi:mem-aref ptr :pointer i)
         collect (cffi:foreign-string-to-lisp str-ptr)))
 
 
-
 (defun c-ptr-array-to-ptr-list (ptr count)
+  "Converts an array of C-pointers (`PTR` / `void**`) with length of `COUNT` into a list of CFFI pointers."
   (loop for i from 0 below count
         for obj-ptr = (cffi:mem-aref ptr :pointer i)
         collect obj-ptr))
