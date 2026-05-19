@@ -214,7 +214,22 @@ error."
         (ns         '*def-cmd-ns*)
         (wrap-p     t))
      &rest body)
+  "Define new Tcl command of `NAME` with the `BODY` Lisp forms.
 
+- `:LAMBDA-LIST` list should have exact 2 elements, positionally, `(LIST INTERP ARGS)`.
+- The `ARGS` of the `:LAMBDA-LIST` could be one of a LIST OF STRINGs or LIST OF TCL-OBJ-PTRs. By `:ARGS-TYPE`, `:STRINGS` or `:OBJS`.
+
+- If `:WRAP-P` is `T`, it takes the responsibility of the conversion of the result value of `BODY`.
+- It also takes care of Lisp error condition during evaluation of `BODY` into Tcl error state.
+
+- If `:WRAP-P` is nil, you should set the Tcl state variables by using `Tcl_SetObjResult`, `Tcl_SetStringResult` manually.
+- Also, VERY IMPORTANTLY, the `BODY` should evaluates as one of `+TCL-OK+` or `+TCL-ERROR+` when `:WRAP-P NIL`.
+
+- `:NS` specifies Tcl namespace where the new command added.
+
+This macro could be enclosed within `DEF-ENSEMBLE`.
+"
+  ;;
   (let* ((create-command-func
            (case args-type
              (:strings 'create-string-command)
