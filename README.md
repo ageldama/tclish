@@ -105,6 +105,7 @@
          1. [FUNCTION: `CREATE-OBJ-COMMAND`](#api-function-create-obj-command_FE8CA501C9A0EF6F0962122420E4EF6C)
          1. [FUNCTION: `CREATE-STRING-COMMAND`](#api-function-create-string-command_0096EE9DB579073F1EC3C3DFAE173CC3)
          1. [FUNCTION: `DEF-CMD/P`](#api-function-def-cmdp_9480FC024D041FA820CCA366CF6FEF03)
+         1. [FUNCTION: `DEF-CMD/PP`](#api-function-def-cmdpp_645CD85CBC4CE265EDABD64FF4077B20)
          1. [FUNCTION: `ENSEMBLE/EXCLUDE`](#api-function-ensembleexclude_ABCE680CE846B2811BC2763A281AD85D)
          1. [FUNCTION: `ENSEMBLE/INCLUDE`](#api-function-ensembleinclude_6415BF0E9239013E94F13232BECC286F)
          1. [FUNCTION: `ENSEMBLE/RENAME`](#api-function-ensemblerename_F7776BD211CF39E6E448CF8433BF63D7)
@@ -516,6 +517,7 @@ Please read the [./LICENSE](./LICENSE)
 - LAMBDA LIST: `(TCLISH/CFFI::PTR COUNT)`
 - SETF? `NIL`
 
+Converts an array of C-pointers (`PTR` / `void**`) with length of `COUNT` into a list of CFFI pointers.
 
 <a name="api-function-c-string-array-to-string-list_9C2C3F5DCCFA93E2D7E796CF26E4088D"></a>
 ### FUNCTION: `C-STRING-ARRAY-TO-STRING-LIST`
@@ -524,6 +526,8 @@ Please read the [./LICENSE](./LICENSE)
 - LAMBDA LIST: `(TCLISH/CFFI::PTR COUNT)`
 - SETF? `NIL`
 
+Converts an array of C-strings (`PTR` / `char**`) with length of `COUNT` into a
+list of lisp strings.
 
 <a name="api-function-c-strlen_CA150F3ABD68C9E7E1B61B41321D4C9E"></a>
 ### FUNCTION: `C-STRLEN`
@@ -1100,7 +1104,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CLOSURE)`
 - SETF? `NIL`
 
-(CALL-WHEN-DELETED/+ADD closure) => client-data
+Registers Tcl interpreter deletion hook callback.
+
+`(CALL-WHEN-DELETED/+ADD closure)` => `client-data`
 
 <a name="api-function-call-when-deleted-del_5610DB497329F7995AD642E77B21E006"></a>
 ### FUNCTION: `CALL-WHEN-DELETED/-DEL`
@@ -1109,6 +1115,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH:CLIENT-DATA)`
 - SETF? `NIL`
 
+Unregisters Tcl interpreter deletion hook callback.
 
 <a name="api-function-call-when-deletedalloc-counter-cffi_1B4170644CC6DEB69E4F73DEFC3DEF0F"></a>
 ### FUNCTION: `CALL-WHEN-DELETED/ALLOC-COUNTER-CFFI`
@@ -1213,6 +1220,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD-INFO)`
 - SETF? `NIL`
 
+Deallocates `CMD-INFO`(`Tcl_CmdInfo *`) FFI pointer.
 
 <a name="api-function-cmd-infofrom-cmd-obj_90D20C3B0CBFBCAD440B0DBFA4882104"></a>
 ### FUNCTION: `CMD-INFO/FROM-CMD-OBJ`
@@ -1221,6 +1229,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD-OBJ)`
 - SETF? `NIL`
 
+Gets newly allocated `Tcl_CmdInfo *` FFI pointer of `CMD-OBJ`(`Tcl_Command` FFI pointer)
 
 <a name="api-function-cmd-infofrom-cmd-obj_90D20C3B0CBFBCAD440B0DBFA4882104"></a>
 ### FUNCTION: `CMD-INFO/FROM-CMD-OBJ`
@@ -1229,6 +1238,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::NEW-CMD-INFO TCLISH::CMD-OBJ)`
 - SETF? `T`
 
+Sets `NEW-CMD-INFO`(`Tcl_CmdInfo *` FFI pointer) to `CMD-OBJ`(`Tcl_Command` FFI pointer).
 
 <a name="api-function-cmd-infofull-name_CA1A1A74F237C8F3ECA54A0B8D7C4827"></a>
 ### FUNCTION: `CMD-INFO/FULL-NAME`
@@ -1237,6 +1247,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD-OBJ)`
 - SETF? `NIL`
 
+Gets FQN name string of `CMD-OBJ`. (`Tcl_Command` FFI pointer)
 
 <a name="api-function-create-ensemble_D3A5E5B328375313EC151784FB130D4F"></a>
 ### FUNCTION: `CREATE-ENSEMBLE`
@@ -1246,6 +1257,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
  (TCLISH:INTERP TCLISH:*TCL-INTERP*))`
 - SETF? `NIL`
 
+Creates a Tcl ensemble of Tcl namespace (`NS-FQN`) with (ENSEMBLE-CMD-NAME => CMD-FQN) mapping table (`ENSEMBLE-MAP-HT`).
+
+Returns FFI pointer of the created ensemble object. (`Tcl_Command`)
 
 <a name="api-function-create-obj-command_FE8CA501C9A0EF6F0962122420E4EF6C"></a>
 ### FUNCTION: `CREATE-OBJ-COMMAND`
@@ -1270,6 +1284,20 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(&KEY (TCLISH:CMD-NAME "p"))`
 - SETF? `NIL`
 
+Defines `CMD-NAME`=`p` Tcl command.
+
+Which simply prints arguments as Tcl strings to `*STANDARD-OUTPUT*`.
+
+<a name="api-function-def-cmdpp_645CD85CBC4CE265EDABD64FF4077B20"></a>
+### FUNCTION: `DEF-CMD/PP`
+
+- SCOPE: EXTERNAL
+- LAMBDA LIST: `(&KEY (TCLISH:CMD-NAME "pp"))`
+- SETF? `NIL`
+
+Defines `CMD-NAME`=`pp` Tcl command.
+
+Which simply pretty-prints arguments as Tcl strings to `*STANDARD-OUTPUT*`.
 
 <a name="api-function-ensembleexclude_ABCE680CE846B2811BC2763A281AD85D"></a>
 ### FUNCTION: `ENSEMBLE/EXCLUDE`
@@ -1278,6 +1306,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::ENSEMBLE-NAME)`
 - SETF? `NIL`
 
+Within `DEF-ENSEMBLE`, excludes subcommand(`ENSEMBLE-NAME`).
 
 <a name="api-function-ensembleinclude_6415BF0E9239013E94F13232BECC286F"></a>
 ### FUNCTION: `ENSEMBLE/INCLUDE`
@@ -1286,6 +1315,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::ENSEMBLE-NAME &KEY TCLISH::CMD-FQN)`
 - SETF? `NIL`
 
+Within `DEF-ENSEMBLE`, used to include the other command (`CMD-FQN`) from outside of the namespace with subcommand name(`ENSEMBLE-NAME`)
 
 <a name="api-function-ensemblerename_F7776BD211CF39E6E448CF8433BF63D7"></a>
 ### FUNCTION: `ENSEMBLE/RENAME`
@@ -1294,6 +1324,7 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::FROM-ENSEMBLE &KEY TCLISH::TO-ENSEMBLE)`
 - SETF? `NIL`
 
+Within `DEF-ENSEMBLE`, renames existing subcommand(`FROM-ENSEMBLE`) as `TO-ENSEMBLE`.
 
 <a name="api-function-eval-tclstr_15D307888B21AA403BE5948E4D6D1040"></a>
 ### FUNCTION: `EVAL-TCL/STR`
@@ -1302,6 +1333,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD)`
 - SETF? `NIL`
 
+Evalutes Tcl script `CMD` and checks the result code.
+
+Affected by `*DO+CHK/ERROR?*`.
 
 <a name="api-function-eval-tcltcl-obj-list_38D7441FA433D57AF6B07E8C77BBEE6D"></a>
 ### FUNCTION: `EVAL-TCL/TCL-OBJ-LIST`
@@ -1310,7 +1344,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD-LIST)`
 - SETF? `NIL`
 
-(list Tcl_Obj*)
+Evaluates a list of Tcl string FFI pointers. (`CMD-LIST`)
+
+Affected by `*DO+CHK/ERROR?*`.
 
 <a name="api-function-eval-tcltcl-objv_789A16C7EC55076932FD543BAAABF1E2"></a>
 ### FUNCTION: `EVAL-TCL/TCL-OBJV`
@@ -1319,7 +1355,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::OBJV TCLISH::OBJC)`
 - SETF? `NIL`
 
-:tcl-objv (obj-count  Tcl_Obj**)
+Evaluates an array of Tcl object pointers. (`OBJV`/`OBJC`).
+
+Affected by `*DO+CHK/ERROR?*`.
 
 <a name="api-function-eval-tcltcl-string_8FB8B82AE186050302F19169E9426191"></a>
 ### FUNCTION: `EVAL-TCL/TCL-STRING`
@@ -1328,7 +1366,9 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - LAMBDA LIST: `(TCLISH::CMD)`
 - SETF? `NIL`
 
-:tcl-string (Tcl_Obj*)
+Evaluates a Tcl string FFI pointer. (`CMD`)
+
+Affected by `*DO+CHK/ERROR?*`.
 
 <a name="api-function-eval-tcl_DC3765A0EB21F760ADBD6F059A3BC2F1"></a>
 ### FUNCTION: `EVAL-TCL`
@@ -1336,6 +1376,17 @@ Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl
 - SCOPE: EXTERNAL
 - LAMBDA LIST: `(&REST TCLISH::CMDS)`
 - SETF? `NIL`
+
+Evaluates given Tcl commands(`CMDS`) sequentially and returns the last result.
+
+- if `CMDS` has a sequence of `:RESULT-AS :OBJ` or `:RESULT-AS :STRING`, returning value will be a `TCL-OBJ-PTR` or a Lisp string.
+
+- each element of `CMDS` can be one of:
+  - a Lisp string.
+  - a Lisp list can be a form of:
+    - `(LIST :TCL-STRING TCL-STR-PTR)`
+    - `(LIST :TCL-OBJV OBJV-TCL-OBJ-PTR OBJC)` where `OBJC` is a number.
+    - or `(LIST TCL-OBJ-PTR-1 .. TCL-OBJ-PTR-N)`
 
 
 <a name="api-function-flags-bit_91FAE56118B55F8CD5CAEADAB96B801E"></a>
@@ -1818,6 +1869,17 @@ Mounts ZipFS.
  (TCLISH::QUEUE-POSITION :TCL-QUEUE-TAIL) (TCLISH::THREAD-ALERT-P T))`
 - SETF? `NIL`
 
+Enqueues an invocation of `:EV-QUEUE-CB-FDEF` Lisp function value to Tcl's event queue.
+
+- `:INTERP`, `:THREAD-ID` : Tcl interpreter and the thread of interpreter is running in. (can get by `TCL-GET-CURRENT-THREAD`)
+- `:QUEUE-POSITION`, one of `TCL-QUEUE-POSITION` CFFI enum variants.
+- `:THREAD-ALERT-P`, whether executes `Tcl_ThreadAlert()` after the callback has been queued.
+
+`:EV-QUEUE-CB-FDEF` is:
+- takes 3-positional arguments: `(INTERP THREAD-ID CB-COUNTER)`
+- returns the number `1`. (See `Tcl_ThreadQueueEvent`)
+
+
 
 <a name="api-function-remhash-by-value_8042B598E655FFC9F1A417EC07306816"></a>
 ### FUNCTION: `REMHASH-BY-VALUE`
@@ -1842,6 +1904,8 @@ Mounts ZipFS.
 - LAMBDA LIST: `(TCLISH::AN-ERROR)`
 - SETF? `NIL`
 
+Sets Tcl result state with a string message of Lisp condition
+`AN-ERROR`.
 
 <a name="api-function-set-tcl-result-string_82AE2AA171037E491DCE4200B2435590"></a>
 ### FUNCTION: `SET-TCL-RESULT-STRING`
@@ -1850,6 +1914,7 @@ Mounts ZipFS.
 - LAMBDA LIST: `(TCLISH::S)`
 - SETF? `NIL`
 
+Sets Tcl result state with Lisp string `S`.
 
 <a name="api-function-set-varobj_F4E90A5DD13E210B4ABDBAEC2FCC9AB1"></a>
 ### FUNCTION: `SET-VAR/OBJ`
@@ -1882,6 +1947,7 @@ Mounts ZipFS.
 - LAMBDA LIST: `(TCLISH::S)`
 - SETF? `NIL`
 
+Lisp string => char*
 
 <a name="api-function-tcl-ns_7B3139E774070EDA6B2C54ADFFDC6C8F"></a>
 ### FUNCTION: `TCL-NS`
@@ -1916,6 +1982,9 @@ Mounts ZipFS.
 - LAMBDA LIST: `(&REST TCLISH:ARGS)`
 - SETF? `NIL`
 
+Extracts `Tcl_GetStringResult` and Converts it into a Lisp condition.
+
+If `*DO+CHK/ERROR?*`=`T`, also raises error condition.
 
 <a name="api-function-trace-cmdtrace_A74A697127FE7F50B669C348BE519E1D"></a>
 ### FUNCTION: `TRACE-CMD/+TRACE`
@@ -2181,6 +2250,11 @@ Unmounts ZipFS
 - LAMBDA LIST: `(TCLISH:INTERP TCLISH::ERR)`
 - SETF? `NIL`
 
+Sets Tcl interpreter's (`INTERP`) error state variable (`Tcl_SetErrorCode()`) by `ERR` Lisp error condition value.
+
+The generated error values are returned as (`(LIST error-1 error-2)`)
+where the elements are `Tcl_Obj*` FFI pointer.
+
 
 <a name="api-function-wrap-error_740EB6BA24804D761A0786F661F71744"></a>
 ### FUNCTION: `WRAP-ERROR`
@@ -2189,6 +2263,9 @@ Unmounts ZipFS
 - LAMBDA LIST: `(TCLISH:INTERP TCLISH::ERR)`
 - SETF? `NIL`
 
+Sets Tcl interpreter (`INTERP`) result state variable with Lisp error
+condition value `ERR`, and returns `+TCL-ERROR+` to indicate it has
+error.
 
 <a name="api-function-wrap-result_BD90A9735958013B7DA9E33B6794197C"></a>
 ### FUNCTION: `WRAP-RESULT`
@@ -2196,6 +2273,14 @@ Unmounts ZipFS
 - SCOPE: EXTERNAL
 - LAMBDA LIST: `(TCLISH:INTERP TCLISH::VAL)`
 - SETF? `NIL`
+
+Wraps and sets Tcl interpreter (`INTERP`) result state variable with
+`VAL` Lisp value into Tcl result value.
+
+Uses `Tcl_NewStringObj` and `Tcl_SetObjResult` C APIs.
+
+If `VAL` is nil, it simply resets the Tcl result state variable using
+`Tcl_ResetResult`.
 
 
 <a name="api-macro-defun-create-command_3671337BCC6B101FFC4EB45D517AD8BE"></a>
@@ -2280,6 +2365,21 @@ It evaluates as `BODY`.
  &REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Define new Tcl command of `NAME` with the `BODY` Lisp forms.
+
+- `:LAMBDA-LIST` list should have exact 2 elements, positionally, `(LIST INTERP ARGS)`.
+- The `ARGS` of the `:LAMBDA-LIST` could be one of a LIST OF STRINGs or LIST OF TCL-OBJ-PTRs. By `:ARGS-TYPE`, `:STRINGS` or `:OBJS`.
+
+- If `:WRAP-P` is `T`, it takes the responsibility of the conversion of the result value of `BODY`.
+- It also takes care of Lisp error condition during evaluation of `BODY` into Tcl error state.
+
+- If `:WRAP-P` is nil, you should set the Tcl state variables by using `Tcl_SetObjResult`, `Tcl_SetStringResult` manually.
+- Also, VERY IMPORTANTLY, the `BODY` should evaluates as one of `+TCL-OK+` or `+TCL-ERROR+` when `:WRAP-P NIL`.
+
+- `:NS` specifies Tcl namespace where the new command added.
+
+This macro could be enclosed within `DEF-ENSEMBLE`.
+
 
 <a name="api-macro-def-ensemble_89A74F29323FAFDDE57F72F41762FDE2"></a>
 ### MACRO: `DEF-ENSEMBLE`
@@ -2288,6 +2388,11 @@ It evaluates as `BODY`.
 - LAMBDA LIST: `((TCLISH::NS-FQN &KEY (TCLISH:INTERP 'TCLISH:*TCL-INTERP*)) &REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Tcl ensemble defining DSL.
+
+Defines new Tcl ensemble at `NS-FQN` by evaluating the `BODY`.
+
+To define subcommands of the ensemble, enclose `DEF-CMD`-macros.
 
 <a name="api-macro-def-tcl-callback-pattern_F73B15D6F4F58D1579444E922A276C7A"></a>
 ### MACRO: `DEF-TCL-CALLBACK-PATTERN`
@@ -2416,6 +2521,12 @@ Runs Tcl C API function (`FN`) and Checks its result-code.
  &REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Enqueues Tcl Event Queue with `BODY`.
+
+`BODY` is wrapped within a function takes `:LAMBDA-LIST` and returns `CB-RETURN-CODE`.
+
+`FWD-OPTS` are will be forwarded to `QUEUE-EVT-FUNC`, as `INTERP`/`THREAD-ID`... Consult the docstring.
+
 
 <a name="api-macro-track-def-cmds_7B2DAFF84BA57FD399D2FEAEC46B6586"></a>
 ### MACRO: `TRACK-DEF-CMDS`
@@ -2424,6 +2535,8 @@ Runs Tcl C API function (`FN`) and Checks its result-code.
 - LAMBDA LIST: `(&REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Gather invocation of `(FUNCALL *DEF-CMD-TRACKER* FQN :NS .. :NAME ..)`
+within `BODY`.
 
 <a name="api-macro-with-cmd-info_A8DC4811B0B3BBA57B08B14BBE61C7F5"></a>
 ### MACRO: `WITH-CMD-INFO`
@@ -2432,6 +2545,9 @@ Runs Tcl C API function (`FN`) and Checks its result-code.
 - LAMBDA LIST: `((&KEY TCLISH::V-CMD-INFO TCLISH::CMD-OBJ TCLISH::MODIFY?) &REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Gets `Tcl_CmdInfo*`(bind as `:V-CMD-INFO`) of `:CMD-OBJ`(`Tcl_Command`), and evaluates `BODY` with the binding.
+
+`:MODIFY?` indicates set back the `:V-CMD-INFO` bound `Tcl_CmdInfo*` by using `(SETF (CMD-INFO/FROM-CMD-OBJ CMD-OBJ) ...)`
 
 <a name="api-macro-with-interp_92FA276533D47FA30402607B0E838E22"></a>
 ### MACRO: `WITH-INTERP`
@@ -2788,4 +2904,4 @@ lisp errors))
 
 
 --------------------------------
-Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T14:51:26.690165+09:00 by https://github.com/ageldama
+Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T16:21:55.365644+09:00 by https://github.com/ageldama

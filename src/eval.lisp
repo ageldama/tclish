@@ -49,7 +49,6 @@ Affected by `*DO+CHK/ERROR?*`."
   "Evaluates a list of Tcl string FFI pointers. (`CMD-LIST`)
 
 Affected by `*DO+CHK/ERROR?*`."
-  "(list Tcl_Obj*)"
   (with-tcl-objv (cmd-list)
     (eval-tcl/tcl-objv tcl-objv tcl-objc)))
 
