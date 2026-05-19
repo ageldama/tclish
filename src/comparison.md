@@ -14,7 +14,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 |                  | 🐥 Just born yesterday                                                            |
 |                  | 🐣 Doesn't even have a proper Tk abstrations, (not yet, working on it)            |
 |                  | 😍 Freely access internals of Tcl/Tk (a bit?)                                     |
-|                  | 😅 Not widely tested, documented (not yet, working on it)                         |
+|                  | 😅 Not widely tested (not yet)                                                    |
 |                  | 😍 Focused on integrating Tcl/Tk easily with Lisp                                 |
 |                  | 😍 ZipFS supports builtin                                                         |
 |                  | 🤩 I love working with it!                                                        |

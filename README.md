@@ -3,7 +3,7 @@
 
 > Much more Lispy(tm) Tcl/Tk 9.0
 
-* VERSION: 0.0.1
+* VERSION: 1.0
 
 * Currenctly only tested under:
    * SBCL 2.6.4 / Linux x86_64
@@ -338,7 +338,7 @@ A comparasion table with other great Tcl/Tk libraries for Common Lisp:
 |                  | 🐥 Just born yesterday                                                            |
 |                  | 🐣 Doesn't even have a proper Tk abstrations, (not yet, working on it)            |
 |                  | 😍 Freely access internals of Tcl/Tk (a bit?)                                     |
-|                  | 😅 Not widely tested, documented (not yet, working on it)                         |
+|                  | 😅 Not widely tested (not yet)                                                    |
 |                  | 😍 Focused on integrating Tcl/Tk easily with Lisp                                 |
 |                  | 😍 ZipFS supports builtin                                                         |
 |                  | 🤩 I love working with it!                                                        |
@@ -2904,4 +2904,4 @@ lisp errors))
 
 
 --------------------------------
-Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T16:21:55.365644+09:00 by https://github.com/ageldama
+Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T16:24:40.092912+09:00 by https://github.com/ageldama

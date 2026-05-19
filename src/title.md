@@ -2,7 +2,7 @@
 
 > Much more Lispy(tm) Tcl/Tk 9.0
 
-* VERSION: 0.0.1
+* VERSION: 1.0
 
 * Currenctly only tested under:
    * SBCL 2.6.4 / Linux x86_64
