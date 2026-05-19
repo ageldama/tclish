@@ -50,11 +50,7 @@ It evaluates as `BODY`.
 - `:TK-INIT?` : Initializes Tk using `Tk_Init()`?
 - `:TK-MAIN-LOOP?` : Enters `Tk_MainLoop()` after initializations.
 
-- `:ZIP-FILENAME` : A .zip filename to be mounted on `:ZIPFS-MNT-POINTER`. (`NIL` means \"Do not mount zipfs by default\")
-- `:ZIP-PASSWD` : Password of .zip file. (`NIL` = no-password)
-- `:ZIPFS-MNT-POINT` : ZipFS mount pointer string.
-- `:ZIPFS-TCL-LIBRARY-PATH` : Tcl library path under ZipFS, overwrites `tcl_library` Tcl variable.
-- `:ZIPFS-TK-LIBRARY-PATH` : Tk library path under ZipFS, overwrites `tk_library` Tcl variable.
+- `:ZIP-FILENAME`, `:ZIP-PASSWD`, `:ZIPFS-MNT-POINT`, `:ZIPFS-TCL-LIBRARY-PATH`, `:ZIPFS-TK-LIBRARY-PATH` : See `MNT-ZIPFS`.
 
 - `:BEFORE-CREATE-INTERP`, `:BEFORE-INIT`, `:AFTER-INIT`, `:BEFORE-DEINIT`, `:AFTER-DEINIT` : Lisp form, customization hook points.
 
