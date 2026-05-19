@@ -1051,6 +1051,7 @@ Please read the [./LICENSE](./LICENSE)
 - LAMBDA LIST: `(TCLISH::CHILD-CMD)`
 - SETF? `NIL`
 
+`Tcl_GetAliasObj` => `(LIST :target-interp CFFI-PTR :target-cmd STRING :objc NUMBER :objv (LIST TCL-OBJ-PTR))`
 
 <a name="api-function-aliasobj_03F439710E33CFDBD7362BC03589AD15"></a>
 ### FUNCTION: `ALIAS/OBJ`
@@ -1060,6 +1061,7 @@ Please read the [./LICENSE](./LICENSE)
  TCLISH::TCL-OBJ-LIST-OBJV)`
 - SETF? `NIL`
 
+`Tcl_CreateAliasObj`
 
 <a name="api-function-aliasstr_080C85487D4AA9CEB7C22143714771A2"></a>
 ### FUNCTION: `ALIAS/STR`
@@ -1069,6 +1071,7 @@ Please read the [./LICENSE](./LICENSE)
  TCLISH::ARGV)`
 - SETF? `NIL`
 
+`Tcl_CreateAlias`
 
 <a name="api-function-alist-tcl-dict_BB0C66EF329A1AA4CF19BAAB604EFE6E"></a>
 ### FUNCTION: `ALIST->TCL-DICT`
@@ -1085,6 +1088,10 @@ Please read the [./LICENSE](./LICENSE)
 - LAMBDA LIST: `(TCLISH::TCL-LAMBDA TCLISH:ARGS &KEY (TCLISH:RESULT-AS :STRING))`
 - SETF? `NIL`
 
+Apply `ARGS` on Tcl lambda-list (`TCL-LAMBDA`): https://www.tcl-lang.org/man/tcl/TclCmd/apply.html
+
+`:RESULT` keyword parameter is `(MEMBER (:STRING :OBJ)` (See
+`RESULT-AS`)
 
 <a name="api-function-call-when-deletedadd_B22D396B5C8FDCB0B4FAF7ABAAEAE6C3"></a>
 ### FUNCTION: `CALL-WHEN-DELETED/+ADD`
@@ -1770,6 +1777,13 @@ Please read the [./LICENSE](./LICENSE)
  (TCLISH::TK-LIBRARY-PATH "/tk_library"))`
 - SETF? `NIL`
 
+Mounts ZipFS.
+
+- `:ZIP-FILENAME` : A .zip filename to be mounted on `:ZIPFS-MNT-POINTER`. (`NIL` means "Do not mount zipfs by default")
+- `:ZIP-PASSWD` : Password of .zip file. (`NIL` = no-password)
+- `:ZIPFS-MNT-POINT` : ZipFS mount pointer string.
+- `:ZIPFS-TCL-LIBRARY-PATH` : Tcl library path under ZipFS, overwrites `tcl_library` Tcl variable.
+- `:ZIPFS-TK-LIBRARY-PATH` : Tk library path under ZipFS, overwrites `tk_library` Tcl variable.
 
 <a name="api-function-nullptr-nil_3863281E2BF50E6C20677107D5195126"></a>
 ### FUNCTION: `NULLPTR->NIL`
@@ -2150,6 +2164,7 @@ Please read the [./LICENSE](./LICENSE)
 - LAMBDA LIST: `(&KEY (TCLISH::MNT-POINT "//zipfs:/app"))`
 - SETF? `NIL`
 
+Unmounts ZipFS
 
 <a name="api-function-unset-var_C3F36293AD59CD0AB54EB68603D03117"></a>
 ### FUNCTION: `UNSET-VAR`
@@ -2225,6 +2240,34 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
  &REST TCLISH::BODY)`
 - SETF? `NIL`
 
+Tcl/Tk embedding macro: does initializations/deinitialization of Tcl/Tk.
+
+1. (Optional) use Tk. (use Tcl only)
+1. Initializes and Binds `*TCL-INTERP*` special variable.
+1. (Optional) Mounts ZipFS for Tcl/Tk deployment
+1. (Optional) Redirects Tcl `stdout`/`stderr` channels to Lisp streams.
+1. Various "hooks" for custom initializations/deinitializations.
+
+It evaluates as `BODY`.
+
+- `:DO+CHK/ERROR?` sets `*DO+CHK/ERROR?*` (Tcl errors as Lisp errors, instead of Lisp string results)
+
+- `:TCL-CREATE-INTERP` : a Lisp form used to create new `Tcl_Interp *`-instance.
+
+- `:TCL-INIT-SUBSYSTEMS?` : Applies `Tcl_InitSubsystems()` during initializations.
+
+- `:TK-INIT?` : Initializes Tk using `Tk_Init()`?
+- `:TK-MAIN-LOOP?` : Enters `Tk_MainLoop()` after initializations.
+
+- `:ZIP-FILENAME`, `:ZIP-PASSWD`, `:ZIPFS-MNT-POINT`, `:ZIPFS-TCL-LIBRARY-PATH`, `:ZIPFS-TK-LIBRARY-PATH` : See `MNT-ZIPFS`.
+
+- `:BEFORE-CREATE-INTERP`, `:BEFORE-INIT`, `:AFTER-INIT`, `:BEFORE-DEINIT`, `:AFTER-DEINIT` : Lisp form, customization hook points.
+
+- `:STDOUT-STREAM`, `:STDERR-STREAM` : Tcl `stdout`/`stderr` redirection to Lisp streams, `NIL` = "No redirections"
+
+- `:TERMINATE-WITHOUT-DEINIT` : Skips the deinitializations.
+
+
 
 <a name="api-macro-def-cmd_A944F19F7D14711CA81C5E1856F940D3"></a>
 ### MACRO: `DEF-CMD`
@@ -2254,6 +2297,85 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
  (TCLISH::CLOSURE-MAP-INITFORM '(MAKE-HASH-TABLE)))`
 - SETF? `NIL`
 
+Generates definitions & codes for interacting with Tcl C callback mechanisms.
+
+- `:CB-PREFIX` is mandatory, and will be used to prefixing every generated definitions and functions.
+- `:ONE-OFF?` indicates the registered callbak should be cleaned up once it has invoked, never meant to be used twice or more.
+
+
+This macro defines:
+
+- `${:CB-PREFIX}-CB-COUNTER-T` CFFI type
+- `*${:CB-PREFIX}-CB-COUNTER*` variable
+- `*${:CB-PREFIX}-CB-HT*` variable
+- `*${:CB-PREFIX}-CB-LOCK*` variable
+- `${:CB-PREFIX}/ALLOC-COUNTER-CFFI` and `${:CB-PREFIX}/FREE-COUNTER-CFFI` functions
+- `${:CB-PREFIX}/COUNTER-CFFI` and `(SETF ${:CB-PREFIX}/COUNTER-CFFI)` functions
+- `${:CB-PREFIX}/INCR-COUNT` function
+- `${:CB-PREFIX}/CB` and `(SETF ${:CB-PREFIX/CB)` functions
+- `${:CB-PREFIX}/DEL-CB` function
+- `${:CB-PREFIX}/REGIST-CB` and `${:CB-PREFIX}/UNREGIST-CB` functions
+- `${:CB-PREFIX}/ROUTE-BY-CLIENT-DATA` function
+
+Let's take an example, where the `:CB-PREFIX` is `"CALLME"` :
+
+- `*CALLME-CB-COUNTER*` keep track of last issued "callback number", this number is used to tag passed to C API and passed back from C API callbacks as "`clientData`" or "closure". This tag is used to find matching Lisp closure to invoke.
+
+- `(CALLME/ALLOC-COUNTER-CFFI counter)` and `(CALLME/FREE-COUNTER-CFFI returned-counter-ptr-from-alloc-counter-cffi)` functions are used to allocate/deallocate heap memory for counter numbers. Also could assign `counter`. The type of the CFFI allocated variable is `CALLME-CB-COUNTER-T`.
+- `CALLME-CB-COUNTER-T` will be a CFFI typedef, usually integer types, like `:UINT64`,
+- `(CALLME/COUNTER counter-ptr)` and `(SETF (CALLME/COUNTER counter-ptr) counter)` reads and writes from/to heap allocated C variable `counter-ptr` with `counter`.
+
+- `(CALLME/INCR-COUNT)` simply returns new counter number.
+
+- `*CALLME-CB-LOCK*` is used to ensure thread-safety of counter and
+  callback registration table.
+
+- `(CALLME/CB counter)` look for a registered callback in the registration table. (`*CALLME-CB-HT*`)
+- `(SETF (CALLME/CB counter) (lambda ...))` assigns given function value (`(lambda ...)`) as the `counter`, and `(CALLME/DEL-CB counter)` removes it from the registration table.
+
+- `(CALLME/REGIST-CB (lambda ...))` registers function value to the registration table as the newly generated counter, and returns the new counter value in Lisp value and C FFI allocated pointer: `(LIST :counter counter :client-data counter-ptr)`, In here `counter-ptr` is the newly allocated counter value for C APIs.
+- `(CALLME/UNREGIST-CB client-data)` takes `counter-ptr` or so called `client-data` returned from `CALLME/REGIST-CB`. Also deallocates the given `client-data`.
+
+- `(CALLME/ROUTE-BY-CLIENT-DATA client-data &rest args)` finds and invokes the registered callback matching with `client-data`. If the `:ONE-OFF?` was `T`, does `CALLME/UNREGIST-CB` as well.
+- `CALLME/ROUTE-BY-CLIENT-DATA` simply does `(APPLY -found-func- args)`, not passing any other data like `client-data` anything else.
+
+Now, make it a bit more concrete:
+
+1. To register a callback, using `void Regist(MyCallback *callback, void *clientData)` C API.
+1. Unregister: `void Unregist(MyCallback *callback, void *clientData)`.
+1. Also: `typedef void (*MyCallback)(void *clientData)`.
+
+```lisp
+(def-tcl-callback-pattern
+  :cb-prefix "CALLME"
+  :one-off?  nil)
+
+(cffi:defcallback %My-Callback
+  :void  ; c-return-type
+  ((client-data :pointer)) ; c-param-types
+  ;; body:
+  (CALLME/ROUTE-BY-CLIENT-DATA client-data))
+
+(defun Do-Regist (lisp-func)
+  (let* ((client-data (CALLME/REGIST-CB lisp-func))
+         (client-data* (getf client-data :client-data)))
+    (cffi:foreign-funcall "Regist"
+     :pointer (cffi:callback %My-Callback)
+     :pointer client-data
+     :void)
+    ;;
+    client-data))
+
+(defun Do-Unregist (client-data)
+  (CALLME/UNREGIST-CB client-data))
+
+
+;;
+(setf token (Do-Regist (lambda (&rest args) (print :OH-HI!))))
+
+(Do-Unregist token)
+```
+
 
 <a name="api-macro-dochk_F2D2ED544BF1962D1CAEABE423F3245B"></a>
 ### MACRO: `DO+CHK`
@@ -2264,6 +2386,16 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
   (TCLISH::ERROR? 'TCLISH:*DO+CHK/ERROR?*) (TCLISH::INCLUDE-ERROR-INFO? T))
  &REST TCLISH:ARGS)`
 - SETF? `NIL`
+
+Runs Tcl C API function (`FN`) and Checks its result-code.
+
+- `ARGS` is a list of arguments to be applied on `FN`.
+
+- `:INTERP` is a Tcl interpreter runs Tcl C API function (`FN`).
+- `:TCL-OK` is used to check the result-code of `FN`, specifies code
+  for "No Errors". (usually `+TCL-OK+`)
+- `:ERROR?` asks raising Lisp error condition instead of just returning error message strings.
+- `:INCLUDE-ERROR-INFO?` asks that Lisp error condition or error message strings should include the contents of Tcl `errorInfo` variable.
 
 
 <a name="api-macro-nconcf-if_5E5B27D99B6CE44FE13D6D1517DCBE85"></a>
@@ -2316,6 +2448,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 - LAMBDA LIST: `(&REST TCLISH::BODY)`
 - SETF? `NIL`
 
+In the `BODY`, `DO+CHK` returns error message strings without raising Lisp errors.
 
 <a name="api-macro-with-tcl-errorthrown_7B7AE1A6816A3A54C8E401950286D44F"></a>
 ### MACRO: `WITH-TCL-ERROR/THROWN`
@@ -2324,6 +2457,7 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 - LAMBDA LIST: `(&REST TCLISH::BODY)`
 - SETF? `NIL`
 
+In the `BODY`, `DO+CHK` raises Lisp errors.
 
 <a name="api-macro-with-tcl-objv_126AB448CDEC71DD3AFFC9B1C41E6E1F"></a>
 ### MACRO: `WITH-TCL-OBJV`
@@ -2464,6 +2598,9 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 - SCOPE: EXTERNAL
 - INITIAL-VALUE: `T`
 
+`DO+CHK` macro treats Tcl error status as raising Lisp error
+conditions, not just returning error message strings. (`T` means raise
+lisp errors))
 
 <a name="api-variable-interp-trace-cb-counter_F09D08235BD24B699B06B4BFFA522473"></a>
 ### VARIABLE: `*INTERP-TRACE-CB-COUNTER*`
@@ -2651,4 +2788,4 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+.
 
 
 --------------------------------
-Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T00:58:21.531796+09:00 by https://github.com/ageldama
+Generated with [doqumen](https://github.com/ageldama/doqumen/) at 2026-05-19T14:51:26.690165+09:00 by https://github.com/ageldama
