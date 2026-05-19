@@ -14,9 +14,6 @@
       )))
 
 
-
-
-
 (defun cmd-info/from-cmd-obj (cmd-obj)
   "Gets newly allocated `Tcl_CmdInfo *` FFI pointer of `CMD-OBJ`(`Tcl_Command` FFI pointer)"
   (let ((cmd-info (cffi/alloc+bzero '(:struct tcl-cmd-info))))
