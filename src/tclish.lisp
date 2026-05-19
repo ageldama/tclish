@@ -50,6 +50,7 @@
    #:cb-counter
 
    #:def-cmd/p
+   #:def-cmd/pp
 
    #:*stringify-for-tcl-obj-func*
    #:->tcl-string-obj
