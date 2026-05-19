@@ -42,8 +42,7 @@ Returns FFI pointer of the created ensemble object. (`Tcl_Command`)"
 
 Defines new Tcl ensemble at `NS-FQN` by evaluating the `BODY`.
 
-TODO
-"
+To define subcommands of the ensemble, enclose `DEF-CMD`-macros."
   ;;
   `(let* ((*def-cmd-ns*           ,ns-fqn)
           (*def-cmd-tracking-ht*  (make-hash-table)))
@@ -53,12 +52,15 @@ TODO
 
 
 (defun ensemble/include (ensemble-name &key cmd-fqn)
+  "Within `DEF-ENSEMBLE`, used to include the other command (`CMD-FQN`) from outside of the namespace with subcommand name(`ENSEMBLE-NAME`)"
   (setf (gethash ensemble-name *def-cmd-tracking-ht*) cmd-fqn))
 
 (defun ensemble/exclude (ensemble-name)
+  "Within `DEF-ENSEMBLE`, excludes subcommand(`ENSEMBLE-NAME`)."
   (remhash ensemble-name *def-cmd-tracking-ht*))
 
 (defun ensemble/rename (from-ensemble &key to-ensemble)
+  "Within `DEF-ENSEMBLE`, renames existing subcommand(`FROM-ENSEMBLE`) as `TO-ENSEMBLE`."
   (let ((fqn-name (gethash from-ensemble *def-cmd-tracking-ht*)))
     (ensemble/exclude from-ensemble)
     (ensemble/include to-ensemble :cmd-fqn fqn-name)))
