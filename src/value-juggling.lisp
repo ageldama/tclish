@@ -135,6 +135,7 @@
 
 
 (defun str->tcl-alloced-charp (s)
+  "Lisp string => char*"
   ;; step1. lisp-string => tcl-string
   (cffi:with-foreign-string (c-str s)
     (let ((tcl-str-obj (tcl-new-string-obj c-str -1)))
