@@ -68,6 +68,7 @@ It evaluates as `BODY`.
        ,@(when tcl-init-subsystems?  `((tcl-init-subsystems)))
        (let* ((*tcl-interp*     ,tcl-create-interp)
               (*do+chk/error?*  ,do+chk/error?)
+              (,%result         nil)
               ,@(when stdout-stream
                   `((,%stdout-chan
                      (make-instance
