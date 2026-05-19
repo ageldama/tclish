@@ -140,6 +140,14 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-result (interp val)
+  "Wraps and sets Tcl interpreter (`INTERP`) result state variable with
+`VAL` Lisp value into Tcl result value.
+
+Uses `Tcl_NewStringObj` and `Tcl_SetObjResult` C APIs.
+
+If `VAL` is nil, it simply resets the Tcl result state variable using
+`Tcl_ResetResult`.
+"
   (typecase val
     (null    (tcl-reset-result interp))
     (t       (let* ((str-rep  (format nil "~a" val))
@@ -155,6 +163,11 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-error* (interp err)
+  "Sets Tcl interpreter's (`INTERP`) error state variable (`Tcl_SetErrorCode()`) by `ERR` Lisp error condition value.
+
+The generated error values are returned as (`(LIST error-1 error-2)`)
+where the elements are `Tcl_Obj*` FFI pointer.
+"
   (let ((err-1  "LISP-ERROR")
         (err-2  (symbol-name (class-name (class-of err)))))
     (tcl-set-error-code interp
@@ -174,6 +187,9 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-error (interp err)
+  "Sets Tcl interpreter (`INTERP`) result state variable with Lisp error
+condition value `ERR`, and returns `+TCL-ERROR+` to indicate it has
+error."
   (wrap-error* interp err)
   +tcl-error+)
 
@@ -198,7 +214,22 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
         (ns         '*def-cmd-ns*)
         (wrap-p     t))
      &rest body)
+  "Define new Tcl command of `NAME` with the `BODY` Lisp forms.
 
+- `:LAMBDA-LIST` list should have exact 2 elements, positionally, `(LIST INTERP ARGS)`.
+- The `ARGS` of the `:LAMBDA-LIST` could be one of a LIST OF STRINGs or LIST OF TCL-OBJ-PTRs. By `:ARGS-TYPE`, `:STRINGS` or `:OBJS`.
+
+- If `:WRAP-P` is `T`, it takes the responsibility of the conversion of the result value of `BODY`.
+- It also takes care of Lisp error condition during evaluation of `BODY` into Tcl error state.
+
+- If `:WRAP-P` is nil, you should set the Tcl state variables by using `Tcl_SetObjResult`, `Tcl_SetStringResult` manually.
+- Also, VERY IMPORTANTLY, the `BODY` should evaluates as one of `+TCL-OK+` or `+TCL-ERROR+` when `:WRAP-P NIL`.
+
+- `:NS` specifies Tcl namespace where the new command added.
+
+This macro could be enclosed within `DEF-ENSEMBLE`.
+"
+  ;;
   (let* ((create-command-func
            (case args-type
              (:strings 'create-string-command)

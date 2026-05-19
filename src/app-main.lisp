@@ -31,10 +31,38 @@
         (terminate-without-deinit nil)
         )
      &rest body)
+  "Tcl/Tk embedding macro: does initializations/deinitialization of Tcl/Tk.
 
+1. (Optional) use Tk. (use Tcl only)
+1. Initializes and Binds `*TCL-INTERP*` special variable.
+1. (Optional) Mounts ZipFS for Tcl/Tk deployment
+1. (Optional) Redirects Tcl `stdout`/`stderr` channels to Lisp streams.
+1. Various \"hooks\" for custom initializations/deinitializations.
+
+It evaluates as `BODY`.
+
+- `:DO+CHK/ERROR?` sets `*DO+CHK/ERROR?*` (Tcl errors as Lisp errors, instead of Lisp string results)
+
+- `:TCL-CREATE-INTERP` : a Lisp form used to create new `Tcl_Interp *`-instance.
+
+- `:TCL-INIT-SUBSYSTEMS?` : Applies `Tcl_InitSubsystems()` during initializations.
+
+- `:TK-INIT?` : Initializes Tk using `Tk_Init()`?
+- `:TK-MAIN-LOOP?` : Enters `Tk_MainLoop()` after initializations.
+
+- `:ZIP-FILENAME`, `:ZIP-PASSWD`, `:ZIPFS-MNT-POINT`, `:ZIPFS-TCL-LIBRARY-PATH`, `:ZIPFS-TK-LIBRARY-PATH` : See `MNT-ZIPFS`.
+
+- `:BEFORE-CREATE-INTERP`, `:BEFORE-INIT`, `:AFTER-INIT`, `:BEFORE-DEINIT`, `:AFTER-DEINIT` : Lisp form, customization hook points.
+
+- `:STDOUT-STREAM`, `:STDERR-STREAM` : Tcl `stdout`/`stderr` redirection to Lisp streams, `NIL` = \"No redirections\"
+
+- `:TERMINATE-WITHOUT-DEINIT` : Skips the deinitializations.
+
+"
   ;;
   (let ((%stdout-chan (gensym))
-        (%stderr-chan (gensym)))
+        (%stderr-chan (gensym))
+        (%result      (gensym)))
     `(progn
        ,@(when before-create-interp  (list before-create-interp))
        ,@(when tcl-init-subsystems?  `((tcl-init-subsystems)))
@@ -72,8 +100,10 @@
                             ,%stderr-chan :tcl-interp-ptr    *tcl-interp*
                             :tcl-std-chan-type +tcl-stderr+)))
                      ,@(when after-init (list after-init))
-                     (progn ,@body)
-                     ,@(when tk-main-loop? `((tk-main-loop))))
+                     (setf ,%result (progn ,@body))
+                     ,@(when tk-main-loop? `((tk-main-loop)))
+                     ;; result:
+                     ,%result)
 
            ;; cleanup:
            (unless ,terminate-without-deinit
@@ -86,3 +116,5 @@
                                       ,%stdout-chan)))
              (tcl-delete-interp *tcl-interp*)
              ,@(when after-deinit (list after-deinit))))))))
+
+

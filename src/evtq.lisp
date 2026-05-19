@@ -63,6 +63,17 @@ indicate that the event can be re‐ moved from the queue.
        ev-queue-cb-fdef
        (queue-position :tcl-queue-tail)
        (thread-alert-p t))
+  "Enqueues an invocation of `:EV-QUEUE-CB-FDEF` Lisp function value to Tcl's event queue.
+
+- `:INTERP`, `:THREAD-ID` : Tcl interpreter and the thread of interpreter is running in. (can get by `TCL-GET-CURRENT-THREAD`)
+- `:QUEUE-POSITION`, one of `TCL-QUEUE-POSITION` CFFI enum variants.
+- `:THREAD-ALERT-P`, whether executes `Tcl_ThreadAlert()` after the callback has been queued.
+
+`:EV-QUEUE-CB-FDEF` is:
+- takes 3-positional arguments: `(INTERP THREAD-ID CB-COUNTER)`
+- returns the number `1`. (See `Tcl_ThreadQueueEvent`)
+
+"
   (bt2:with-lock-held (*tcl-ev-queue-lock*)
     (let ((ev-ptr     (tcl-alloc (cffi:foreign-type-size
                                   '(:struct tcl-ev-queue-cb-evt-s))))
@@ -111,6 +122,12 @@ indicate that the event can be re‐ moved from the queue.
         (lambda-list '(interp thread-id cb-counter))
       &allow-other-keys)
      &rest body)
+  "Enqueues Tcl Event Queue with `BODY`.
+
+`BODY` is wrapped within a function takes `:LAMBDA-LIST` and returns `CB-RETURN-CODE`.
+
+`FWD-OPTS` are will be forwarded to `QUEUE-EVT-FUNC`, as `INTERP`/`THREAD-ID`... Consult the docstring.
+"
   `(queue-evt-func ,@fwd-opts
                    :ev-queue-cb-fdef
                    (lambda ,lambda-list

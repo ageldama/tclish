@@ -3,6 +3,7 @@
 
 
 (defun alias/get (child-cmd)
+  "`Tcl_GetAliasObj` => `(LIST :target-interp CFFI-PTR :target-cmd STRING :objc NUMBER :objv (LIST TCL-OBJ-PTR))`"
   (let ((tgt-interp-ptr (cffi:make-pointer 0)))
     (cffi:with-foreign-objects ((tgt-cmd-ptr     :pointer)
                                 (objc-ptr        :pointer)
@@ -22,6 +23,7 @@
 
 (defun alias/str
     (&key child-interp child-cmd tgt-interp tgt-cmd argv)
+  "`Tcl_CreateAlias`"
   (assert child-interp  (child-interp))
   (assert child-cmd     (child-cmd))
   (assert tgt-interp    (tgt-interp))
@@ -35,6 +37,7 @@
 
 (defun alias/obj
     (&key child-interp child-cmd tgt-interp tgt-cmd tcl-obj-list-objv)
+  "`Tcl_CreateAliasObj`"
   (assert child-interp  (child-interp))
   (assert child-cmd     (child-cmd))
   (assert tgt-interp    (tgt-interp))

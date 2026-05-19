@@ -1,5 +1,5 @@
 (defsystem "tclish"
-  :version "0.0.1"
+  :version "1.0"
   :author "Jonghyouk Yun"
   :mailto "ageldama@gmail.com"
   :license "MIT"

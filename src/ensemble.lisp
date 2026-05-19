@@ -6,6 +6,8 @@
 
 (defmacro track-def-cmds
     (&rest body)
+  "Gather invocation of `(FUNCALL *DEF-CMD-TRACKER* FQN :NS .. :NAME ..)`
+within `BODY`."
   `(let* ((*def-cmd-tracker*      (lambda (fqn &key ns name)
                                     (declare (ignore ns))
                                     (setf (gethash name *def-cmd-tracking-ht*)
@@ -16,6 +18,9 @@
 
 (defun create-ensemble
     (ns-fqn ensemble-map-ht &key (interp *tcl-interp*))
+  "Creates a Tcl ensemble of Tcl namespace (`NS-FQN`) with (ENSEMBLE-CMD-NAME => CMD-FQN) mapping table (`ENSEMBLE-MAP-HT`).
+
+Returns FFI pointer of the created ensemble object. (`Tcl_Command`)"
   ;;
   (let* ((ns-ptr       (tcl-ns ns-fqn :interp interp))
          (ensemble-ptr (raw-cffi-tcl9:tcl-create-ensemble
@@ -33,6 +38,11 @@
     ((ns-fqn
       &key (interp '*tcl-interp*))
      &rest body)
+  "Tcl ensemble defining DSL.
+
+Defines new Tcl ensemble at `NS-FQN` by evaluating the `BODY`.
+
+To define subcommands of the ensemble, enclose `DEF-CMD`-macros."
   ;;
   `(let* ((*def-cmd-ns*           ,ns-fqn)
           (*def-cmd-tracking-ht*  (make-hash-table)))
@@ -42,12 +52,15 @@
 
 
 (defun ensemble/include (ensemble-name &key cmd-fqn)
+  "Within `DEF-ENSEMBLE`, used to include the other command (`CMD-FQN`) from outside of the namespace with subcommand name(`ENSEMBLE-NAME`)"
   (setf (gethash ensemble-name *def-cmd-tracking-ht*) cmd-fqn))
 
 (defun ensemble/exclude (ensemble-name)
+  "Within `DEF-ENSEMBLE`, excludes subcommand(`ENSEMBLE-NAME`)."
   (remhash ensemble-name *def-cmd-tracking-ht*))
 
 (defun ensemble/rename (from-ensemble &key to-ensemble)
+  "Within `DEF-ENSEMBLE`, renames existing subcommand(`FROM-ENSEMBLE`) as `TO-ENSEMBLE`."
   (let ((fqn-name (gethash from-ensemble *def-cmd-tracking-ht*)))
     (ensemble/exclude from-ensemble)
     (ensemble/include to-ensemble :cmd-fqn fqn-name)))

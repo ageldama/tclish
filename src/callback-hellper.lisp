@@ -10,7 +10,85 @@
        (closure-map-initform '(make-hash-table))
        ;;(lock-timeout 1)
        )
+  "Generates definitions & codes for interacting with Tcl C callback mechanisms.
 
+- `:CB-PREFIX` is mandatory, and will be used to prefixing every generated definitions and functions.
+- `:ONE-OFF?` indicates the registered callbak should be cleaned up once it has invoked, never meant to be used twice or more.
+
+
+This macro defines:
+
+- `${:CB-PREFIX}-CB-COUNTER-T` CFFI type
+- `*${:CB-PREFIX}-CB-COUNTER*` variable
+- `*${:CB-PREFIX}-CB-HT*` variable
+- `*${:CB-PREFIX}-CB-LOCK*` variable
+- `${:CB-PREFIX}/ALLOC-COUNTER-CFFI` and `${:CB-PREFIX}/FREE-COUNTER-CFFI` functions
+- `${:CB-PREFIX}/COUNTER-CFFI` and `(SETF ${:CB-PREFIX}/COUNTER-CFFI)` functions
+- `${:CB-PREFIX}/INCR-COUNT` function
+- `${:CB-PREFIX}/CB` and `(SETF ${:CB-PREFIX/CB)` functions
+- `${:CB-PREFIX}/DEL-CB` function
+- `${:CB-PREFIX}/REGIST-CB` and `${:CB-PREFIX}/UNREGIST-CB` functions
+- `${:CB-PREFIX}/ROUTE-BY-CLIENT-DATA` function
+
+Let's take an example, where the `:CB-PREFIX` is `\"CALLME\"` :
+
+- `*CALLME-CB-COUNTER*` keep track of last issued \"callback number\", this number is used to tag passed to C API and passed back from C API callbacks as \"`clientData`\" or \"closure\". This tag is used to find matching Lisp closure to invoke.
+
+- `(CALLME/ALLOC-COUNTER-CFFI counter)` and `(CALLME/FREE-COUNTER-CFFI returned-counter-ptr-from-alloc-counter-cffi)` functions are used to allocate/deallocate heap memory for counter numbers. Also could assign `counter`. The type of the CFFI allocated variable is `CALLME-CB-COUNTER-T`.
+- `CALLME-CB-COUNTER-T` will be a CFFI typedef, usually integer types, like `:UINT64`,
+- `(CALLME/COUNTER counter-ptr)` and `(SETF (CALLME/COUNTER counter-ptr) counter)` reads and writes from/to heap allocated C variable `counter-ptr` with `counter`.
+
+- `(CALLME/INCR-COUNT)` simply returns new counter number.
+
+- `*CALLME-CB-LOCK*` is used to ensure thread-safety of counter and
+  callback registration table.
+
+- `(CALLME/CB counter)` look for a registered callback in the registration table. (`*CALLME-CB-HT*`)
+- `(SETF (CALLME/CB counter) (lambda ...))` assigns given function value (`(lambda ...)`) as the `counter`, and `(CALLME/DEL-CB counter)` removes it from the registration table.
+
+- `(CALLME/REGIST-CB (lambda ...))` registers function value to the registration table as the newly generated counter, and returns the new counter value in Lisp value and C FFI allocated pointer: `(LIST :counter counter :client-data counter-ptr)`, In here `counter-ptr` is the newly allocated counter value for C APIs.
+- `(CALLME/UNREGIST-CB client-data)` takes `counter-ptr` or so called `client-data` returned from `CALLME/REGIST-CB`. Also deallocates the given `client-data`.
+
+- `(CALLME/ROUTE-BY-CLIENT-DATA client-data &rest args)` finds and invokes the registered callback matching with `client-data`. If the `:ONE-OFF?` was `T`, does `CALLME/UNREGIST-CB` as well.
+- `CALLME/ROUTE-BY-CLIENT-DATA` simply does `(APPLY -found-func- args)`, not passing any other data like `client-data` anything else.
+
+Now, make it a bit more concrete:
+
+1. To register a callback, using `void Regist(MyCallback *callback, void *clientData)` C API.
+1. Unregister: `void Unregist(MyCallback *callback, void *clientData)`.
+1. Also: `typedef void (*MyCallback)(void *clientData)`.
+
+```lisp
+(def-tcl-callback-pattern
+  :cb-prefix \"CALLME\"
+  :one-off?  nil)
+
+(cffi:defcallback %My-Callback
+  :void  ; c-return-type
+  ((client-data :pointer)) ; c-param-types
+  ;; body:
+  (CALLME/ROUTE-BY-CLIENT-DATA client-data))
+
+(defun Do-Regist (lisp-func)
+  (let* ((client-data (CALLME/REGIST-CB lisp-func))
+         (client-data* (getf client-data :client-data)))
+    (cffi:foreign-funcall \"Regist\"
+     :pointer (cffi:callback %My-Callback)
+     :pointer client-data
+     :void)
+    ;;
+    client-data))
+
+(defun Do-Unregist (client-data)
+  (CALLME/UNREGIST-CB client-data))
+
+
+;;
+(setf token (Do-Regist (lambda (&rest args) (print :OH-HI!))))
+
+(Do-Unregist token)
+```
+"
   (flet  ((fmt->sym (fmt-str &rest args)
             (read-from-string (apply #'format `(nil ,fmt-str ,@args)))))
 
@@ -115,7 +193,5 @@
                    (,unregist-fname client-data)
                    t
                    ))))
-
-
          ))))
 

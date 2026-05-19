@@ -14,7 +14,9 @@
 
 
 (defun call-when-deleted/+add (closure)
-  "(CALL-WHEN-DELETED/+ADD closure) => client-data"
+  "Registers Tcl interpreter deletion hook callback.
+
+`(CALL-WHEN-DELETED/+ADD closure)` => `client-data`"
   ;;
   (let* ((registration (call-when-deleted/regist-cb closure))
          (client-data  (getf registration :client-data)))
@@ -24,6 +26,7 @@
     client-data))
 
 (defun call-when-deleted/-del (client-data)
+  "Unregisters Tcl interpreter deletion hook callback."
   (tcl-dont-call-when-deleted *tcl-interp*
                               (cffi:callback %call-when-deleted-cb-cfunc)
                               client-data)
