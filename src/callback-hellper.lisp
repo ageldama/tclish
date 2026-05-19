@@ -10,6 +10,41 @@
        (closure-map-initform '(make-hash-table))
        ;;(lock-timeout 1)
        )
+  "Generates definitions & codes for interacting with Tcl C callback mechanisms.
+
+- `:CB-PREFIX` is mandatory, and will be used to prefixing every generated definitions and functions.
+- `:ONE-OFF?` indicates the registered callbak should be cleaned up once it has invoked, never meant to be used twice or more.
+
+
+This macro defines:
+
+- `${:CB-PREFIX}-CB-COUNTER-T` CFFI type
+- `*${:CB-PREFIX}-CB-COUNTER*` variable
+- `*${:CB-PREFIX}-CB-HT*` variable
+- `*${:CB-PREFIX}-CB-LOCK*` variable
+- `${:CB-PREFIX}/ALLOC-COUNTER-CFFI` and `${:CB-PREFIX}/FREE-COUNTER-CFFI` functions
+- `${:CB-PREFIX}/COUNTER-CFFI` and `(SETF ${:CB-PREFIX}/COUNTER-CFFI)` functions
+- `${:CB-PREFIX}/INCR-COUNT` function
+- `${:CB-PREFIX}/CB` and `(SETF ${:CB-PREFIX/CB)` functions
+- `${:CB-PREFIX}/DEL-CB` function
+- `${:CB-PREFIX}/REGIST-CB` and `${:CB-PREFIX}/UNREGIST-CB` functions
+- `${:CB-PREFIX}/ROUTE-BY-CLIENT-DATA` function
+
+Let's take an example, where the `:CB-PREFIX` is `\"CALLME\"` :
+
+- `CALLME-CB-COUNTER-T` will be a CFFI typedef, usually integer types, like `:UINT64`,
+- `*CALLME-CB-COUNTER*` keep track of last issued \"callback number\", this number is used to tag passed to C API and passed back from C API callbacks as \"`clientData`\" or \"closure\". This tag is used to find matching Lisp closure to invoke.
+
+- `(CALLME/ALLOC-COUNTER-CFFI counter)` and `(CALLME/FREE-COUNTER-CFFI returned-counter-ptr-from-alloc-counter-cffi)` functions are used to allocate/deallocate heap memory for counter numbers. (also assigns `counter`)
+- `(CALLME/COUNTER counter-ptr)` and `(SETF (CALLME/COUNTER counter-ptr) counter)` reads and writes from/to heap allocated C variable `counter-ptr` with `counter`.
+
+- `(CALLME/INCR-COUNT)` simply returns new counter number.
+
+TODO
+
+
+
+"
 
   (flet  ((fmt->sym (fmt-str &rest args)
             (read-from-string (apply #'format `(nil ,fmt-str ,@args)))))
@@ -115,7 +150,5 @@
                    (,unregist-fname client-data)
                    t
                    ))))
-
-
          ))))
 
