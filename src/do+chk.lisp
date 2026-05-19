@@ -1,7 +1,10 @@
 (in-package :tclish)
 
 
-(defvar *do+chk/error?* t)
+(defvar *do+chk/error?* t
+  "`DO+CHK` macro treats Tcl error status as raising Lisp error
+conditions, not just returning error message strings. (`T` means raise
+lisp errors))")
 
 (defmacro do+chk
     ((fn-name

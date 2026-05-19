@@ -18,11 +18,11 @@
             *tcl-interp* zip-filename mnt-point zip-passwd)
     (do+chk (tcl-set-var)
             *tcl-interp*
-            "tcl-library-path" tcl-library-path%
+            "tcl_library" tcl-library-path%
             +tcl-global-only+)
     (do+chk (tcl-set-var)
             *tcl-interp*
-            "tk-library-path" tk-library-path%
+            "tk_library" tk-library-path%
             +tcl-global-only+))
   t)
 
