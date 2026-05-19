@@ -140,6 +140,14 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-result (interp val)
+  "Wraps and sets Tcl interpreter (`INTERP`) result state variable with
+`VAL` Lisp value into Tcl result value.
+
+Uses `Tcl_NewStringObj` and `Tcl_SetObjResult` C APIs.
+
+If `VAL` is nil, it simply resets the Tcl result state variable using
+`Tcl_ResetResult`.
+"
   (typecase val
     (null    (tcl-reset-result interp))
     (t       (let* ((str-rep  (format nil "~a" val))
@@ -155,6 +163,11 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-error* (interp err)
+  "Sets Tcl interpreter's (`INTERP`) error state variable (`Tcl_SetErrorCode()`) by `ERR` Lisp error condition value.
+
+The generated error values are returned as (`(LIST error-1 error-2)`)
+where the elements are `Tcl_Obj*` FFI pointer.
+"
   (let ((err-1  "LISP-ERROR")
         (err-2  (symbol-name (class-name (class-of err)))))
     (tcl-set-error-code interp
@@ -174,6 +187,9 @@ func은 `(interp args) => int'. 리턴값은 +tcl-ok+ / +tcl-error+."
 
 
 (defun wrap-error (interp err)
+  "Sets Tcl interpreter (`INTERP`) result state variable with Lisp error
+condition value `ERR`, and returns `+TCL-ERROR+` to indicate it has
+error."
   (wrap-error* interp err)
   +tcl-error+)
 
